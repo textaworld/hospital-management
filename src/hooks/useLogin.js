@@ -23,6 +23,8 @@ export const useLogin = () => {
 
       const json = await response.json();
 
+      console.log("superAdmin",json)
+
       if (response.ok) {
         // No error occurred, set data and return success message
         setData(json);

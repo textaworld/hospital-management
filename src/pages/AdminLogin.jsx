@@ -20,8 +20,10 @@ const AdminLogin = () => {
     
       <div className="create-popup">
         <form onSubmit={handleSubmit}>
-          <h2>Log In</h2>
-
+          <h2>Log Inn</h2>
+          <Link to={'/login'}> 
+            Super Admin login
+          </Link>
           <label>
             Email address:
             <input
