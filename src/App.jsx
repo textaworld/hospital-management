@@ -67,16 +67,7 @@ function App() {
         <div className="pages">
           <Routes>
             {/* --------- Common Routes ---------*/}
-            <Route
-              path="/login"
-              element={
-                checkUserRole("SUPER_ADMIN") ? (
-                  <Navigate to="/sadmin" />
-                ) : (
-                  <SuperAdminLogin />
-                )
-              }
-            />
+            <Route path="/Slogin" element={<SuperAdminLogin />} />
 
             {/* <Route
               path="/adminlogin"
