@@ -51,7 +51,7 @@ import ChannelHistory from "./pages/ChannelHistory.jsx";
 import Prescription from "./pages/Prescription.jsx";
 import PatientChannelView from "./pages/PatientChannelView.jsx";
 import HeadOfficeHome from "./pages/HeadOfficeHome.jsx";
-import UpdateChannel from "./pages/updateChannel.jsx";
+import UpdateChannel from "./pages/UpdateChannel.jsx";
 import SendMessages from "./pages/SendMessages.jsx";
 
 function App() {
