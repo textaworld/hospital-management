@@ -14,7 +14,7 @@ import { EmailContextProvider } from "./context/EmailContext.jsx";
 
 // Pages and components
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
-import SuperAdminLogin from "./pages/SuperAdminLogin";
+import SuperAdminLogin from "./pages/SuperAdminLogin.jsx";
 //import SuperAdminRegister from "./pages/SuperAdminRegister";
 import AdminLogin from "./pages/AdminLogin.jsx";
 import Home from "./pages/Home.jsx";
