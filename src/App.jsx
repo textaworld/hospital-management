@@ -318,4 +318,4 @@ function App() {
 
 export default App;
 
-//Consider adding an error boundary to your tree to customize error handling behavior new.
+//Consider adding an error boundary to your tree to customize error handling behavior.
