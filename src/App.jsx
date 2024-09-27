@@ -68,7 +68,6 @@ function App() {
       <BrowserRouter>
         <div className="pages">
           <Routes>
-            {/* --------- Common Routes ---------*/}
             <Route
               path="/login"
               element={
@@ -79,19 +78,6 @@ function App() {
                 )
               }
             />
-
-            {/* <Route
-              path="/adminlogin"
-              element={
-                checkUserRole("ADMIN") ? (
-                  <Navigate to="/" />
-                ) : checkUserRole("SUB_ADMIN") ? (
-                  <Navigate to="/subadminhome" />
-                ) : (
-                  <AdminLogin />
-                )
-              }
-            /> */}
             <Route
               path="/adminlogin"
               element={
@@ -108,9 +94,7 @@ function App() {
                 )
               }
             />
-
             <Route path="/forgotpass" element={<ForgotPassword />} />
-
             <Route
               path="/resetpassword/:adminId/:token"
               element={<ResetPassword />}
