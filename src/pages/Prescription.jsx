@@ -4,10 +4,12 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import "../styles/payment.css"; // Assuming this file already exists for custom styles
 import { useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { useStudentContext } from "../hooks/useStudentContext";
 
 const Prescription = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
+
   const inst_ID = user.instituteId;
   const [sick, setSick] = useState("");
   const [doctor_Name, setDoctor_Name] = useState("");
@@ -19,6 +21,10 @@ const Prescription = () => {
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [medicine ,setMedicine] = useState("")
+  const [phone ,  setPhone  ] = useState("")
+
+
+
 
   const fetchSiteDetails = async () => {
     const response = await fetch(
@@ -53,6 +59,30 @@ const Prescription = () => {
     }
   };
 
+  
+
+  const fetchPatients = async () => {
+    try {
+      const response = await fetch(
+        `https://hospital-management-tnwh.onrender.com/api/patients/getPatientByPatient_Id/${id}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
+      
+      const data = await response.json();
+      setPhone(data.patient.phone)
+      console.log("json",data)
+  
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchPatients();
+  
+  }, []);
+  console.log("phone",phone)
   const handleSubmit = async (e) => {
     e.preventDefault();
     //console.log("Form submitted");
@@ -102,6 +132,8 @@ const Prescription = () => {
         return;
       }
       if (response.ok) {
+        console.log("phone",phone)
+        sendSMS(phone, doctor_Name, description,medicine,date,)
         setDoctor_Name("");
         setDescription("");
         setSick("");
@@ -137,7 +169,51 @@ const Prescription = () => {
       }
     }
   };
-  
+  const sendSMS = async (phone, doctor_Name, description,medicine,date,) => {
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+    console.log("phone",phone)
+    const to = phone;
+ 
+    const message = `Dear Patient, 
+
+    Your recent consultation with Dr. ${doctor_Name} on ${date} has been completed. Here are the details:
+    
+    - Description: ${description}
+    - Prescribed Medicine: ${medicine}
+    
+    Please follow the instructions provided and take the prescribed medication as directed. If you have any questions or experience any issues, feel free to contact our clinic.
+    
+    Take care and get well soon!
+    
+    Regards,`;
+    
+
+    const emailDetails = { to, message,inst_ID };
+
+    console.log("emailDetails",emailDetails)
+
+    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/sms/send-message", {
+      method: "POST",
+      body: JSON.stringify(emailDetails),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+    const json = await response.json();
+    console.log(json)
+
+    if (!response.ok) {
+      setError(json.error);
+    }
+    if (response.ok) {
+      setError(null);
+    }
+  };
+
   return (
     <div style={{ overflowY: "auto", backgroundColor: "#f9f9f9" }}>
       <div

@@ -10,6 +10,23 @@ const SendMessages = () => {
   const [error, setError] = useState(null);  // State to handle errors
   const [charCount, setCharCount] = useState(0); // Character count for the message
   const inst_ID = sitedetail._id;
+  const [remainingSMSCount, setRemainingSMSCount] = useState(0); 
+
+  useEffect(() => {
+
+    // const TopP = sitedetail.topUpPrice
+    // const SMSP = sitedetail.smsPrice
+
+    // console.log(TopP)
+    // console.log(SMSP)
+
+    // console.log(sitedetail.topUpPrice / sitedetail.smsPrice)
+
+    const remSmsCount =parseInt((sitedetail.topUpPrice / sitedetail.smsPrice) - sitedetail.smsCount)
+    setRemainingSMSCount(remSmsCount);
+  }, [sitedetail.smsPrice, sitedetail.topUpPrice , sitedetail.smsCount]);
+
+
 
   // Fetch the phone numbers based on the institute ID
   const fetchChannels = async () => {
@@ -82,7 +99,11 @@ const SendMessages = () => {
     }
 
     phoneNumbers.forEach(phone => {
+      if (remainingSMSCount >= 10) { 
       sendSMS(phone);
+      }else{
+        alert("Your SMS count reached the limit")
+      }
     });
   };
 

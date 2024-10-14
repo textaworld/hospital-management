@@ -242,7 +242,7 @@ const CreateStudent = () => {
                 <input
                   value={patient_ID}
                   type="text"
-                  placeholder="Enter Student ID"
+                  placeholder="Enter Patient ID"
                   required
                   onChange={(e) => setPatient_ID(e.target.value)}
                 />

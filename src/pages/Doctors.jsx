@@ -13,6 +13,8 @@ const Clz = () => {
   const [newPackageStatus, setNewPackageStatus] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const userRole = user.role
+  console.log("user",user)
 
   // Filter doctors based on search query matching doctor ID or name
   const filteredDoctors = doctors.filter((doc) => {
@@ -230,9 +232,18 @@ const Clz = () => {
                       </Link>
                     </td>
                     <td>
-                      <Link to={`/updateClz/${clz._id}`} className="btn btn-success">
-                        <FaEdit />
-                      </Link>
+                    {
+  userRole === "HEAD_OFFICE_ADMIN" ? (
+    <Link to={`/headOfficeHome/updateClz/${clz._id}`} className="btn btn-success">
+      <FaEdit />
+    </Link>
+  ) : (
+    <Link to={`/updateClz/${clz._id}`} className="btn btn-success">
+      <FaEdit />
+    </Link>
+  )
+}
+
                     </td>
                     <td>
                       <Link

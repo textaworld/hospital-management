@@ -290,7 +290,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
 
             <div className="detailsSectionPart">
               <h2>Sent SMS Count </h2>
-              <p> {sitedetail.smsCount}</p>
+              <p> {instituteDetails.smsCount}</p>
             </div>
 
             <div className="detailsSectionPart">
