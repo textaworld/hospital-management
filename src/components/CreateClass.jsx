@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useClassContext } from "../hooks/useClassContext";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -10,11 +10,11 @@ const CreateClass = ({ onClose, onSuccess }) => {
 
   const instID = user.instituteId;
 
-  const [class_ID, setClass_ID] = useState('');
-  const [subject, setSubject] = useState('');
-  const [teacherPhone, setTeacherPhone] = useState('');
-  const [name, setName] = useState('');
-  const [teacherEmail, setTeacherEmail] = useState('');
+  const [class_ID, setClass_ID] = useState("");
+  const [subject, setSubject] = useState("");
+  const [teacherPhone, setTeacherPhone] = useState("");
+  const [name, setName] = useState("");
+  const [teacherEmail, setTeacherEmail] = useState("");
   const navigate = useNavigate();
 
   const [error, setError] = useState(null);
@@ -29,12 +29,12 @@ const CreateClass = ({ onClose, onSuccess }) => {
 
     const classs = {
       inst_ID: instID,
-      doctor_ID:class_ID,
+      doctor_ID: class_ID,
       name,
-      specialization:subject,
+      specialization: subject,
       //teacherName,
-      doctorPhone:teacherPhone,
-      doctorEmail:teacherEmail,
+      doctorPhone: teacherPhone,
+      doctorEmail: teacherEmail,
       //classFees,
     };
 
@@ -56,12 +56,12 @@ const CreateClass = ({ onClose, onSuccess }) => {
       navigate("/");
     }
     if (response.ok) {
-      setClass_ID('');
+      setClass_ID("");
       //setGrade('');
-      setSubject('');
+      setSubject("");
       //setTeacherName('');
-      setTeacherPhone('');
-      setTeacherEmail('');
+      setTeacherPhone("");
+      setTeacherEmail("");
       setError(null);
       dispatch({ type: "CREATE_DOCTOR", payload: json });
       onSuccess();
@@ -96,8 +96,8 @@ const CreateClass = ({ onClose, onSuccess }) => {
               required
             />
           </label> */}
-           <label>
-          Name:
+          <label>
+            Name:
             <input
               value={name}
               type="text"
@@ -108,7 +108,7 @@ const CreateClass = ({ onClose, onSuccess }) => {
           </label>
 
           <label>
-          Specialization:
+            Specialization:
             <input
               value={subject}
               type="text"
@@ -128,24 +128,30 @@ const CreateClass = ({ onClose, onSuccess }) => {
             />
           </label> */}
           <label>
-          Docter Phone:
+            Doctor Phone:
             <input
-               value={teacherPhone}
-               type="number"
-               placeholder="Enter Phone number"
-              
-               onChange={(e) => setTeacherPhone(e.target.value)}
+              value={teacherPhone}
+              type="text" // Change to text to use maxLength
+              placeholder="Enter Phone number"
+              maxLength={11} // Limit input to 11 characters
+              onChange={(e) => {
+                // Ensure the input is numeric and limits to 11 characters
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 11) {
+                  setTeacherPhone(value);
+                }
+              }}
               required
             />
           </label>
+
           <label>
-          Docter Email:
+            Docter Email:
             <input
-               value={teacherEmail}
-               type="email"
-               placeholder="Enter Email"
-             
-               onChange={(e) => setTeacherEmail(e.target.value)}
+              value={teacherEmail}
+              type="email"
+              placeholder="Enter Email"
+              onChange={(e) => setTeacherEmail(e.target.value)}
               required
             />
           </label>
@@ -160,12 +166,14 @@ const CreateClass = ({ onClose, onSuccess }) => {
               required
             />
           </label> */}
-         
+
           <div className="errorContainer">
             {error && <div className="error">{error}</div>}
           </div>
           <div className="buttonContainer">
-            <button type="submit" className="addButton">Add Doctor</button>
+            <button type="submit" className="addButton">
+              Add Doctor
+            </button>
             <button className="cancelButton" type="button" onClick={onClose}>
               Cancel
             </button>

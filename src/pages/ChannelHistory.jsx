@@ -15,6 +15,11 @@ const ChannelHistory = () => {
   const [hostName, setHostName] = useState("");
 
   const fetchSiteDetails = async () => {
+    if (!user) {
+      setError(new Error("User not authenticated"));
+      return;
+    }
+    
     const response = await fetch(
       `https://hospital-management-tnwh.onrender.com/api/site/getone/${user.instituteId}`,
       {

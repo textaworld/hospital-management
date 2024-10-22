@@ -15,9 +15,12 @@ const UpdateChannel = () => {
     const [patientID,setPatientID] = useState("")
     const [room,setRoom] = useState("")
     const [time,setTime] = useState("")
-
+    const [drName, setDRName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [name, setName] = useState("");
+    const [hosName, setHosName] = useState("");
+  const inst_ID =user.instituteId;
   const navigate = useNavigate();
-
 
   const [error, setError] = useState(null);
 
@@ -56,10 +59,64 @@ const UpdateChannel = () => {
   }, [dispatch, user, id]);
 
   
+  const fetchDoctor = async () => {
+    try {
+      const response = await fetch(
+        `https://hospital-management-tnwh.onrender.com/api/doctors/searchDoctorByDoctor_ID/${drID}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
+      
+      const json = await response.json();
+      setDRName(json.name)
+  
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  useEffect(() => {
+    fetchDoctor();
+    fetchUser();
+    fetchHospital();
+  
+  }, [patientID,drID]);
 
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(
+        `https://hospital-management-tnwh.onrender.com/api/patients/searchPatientByPatient_ID/${patientID}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
+      
+      const json = await response.json();
+      setPhone(json.phone)
+      setName(json.name)
+  
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-
+  const fetchHospital = async () => {
+    try {
+      const response = await fetch(
+        `https://hospital-management-tnwh.onrender.com/api/institute/getone/${inst_ID}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
+      
+      const json = await response.json();
+      setHosName(json.name)
+  
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const updateStudent = async () => {
     try {
@@ -86,6 +143,7 @@ const UpdateChannel = () => {
  
   
       if (response.ok) {
+        sendSMS(phone, channelID, name,room,time,date,hosName)
         navigate("/channels"); 
       } else {
         setError(json.error); 
@@ -95,6 +153,47 @@ const UpdateChannel = () => {
     }
   };
   
+  const sendSMS = async (phone, channel_ID, name,room,time,date,hosName) => {
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+
+    const to = phone;
+ 
+    const message = `
+    ${hosName}
+    
+    Dear patient ${name},
+    Your appointment details have been updated.\n
+    Updated Details:
+    Room: ${room}
+    Date: ${date}
+    Time: ${time}
+    Channel ID: ${channel_ID}
+    Thank you.`;
+    
+
+    const emailDetails = { to, message,inst_ID };
+
+
+    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/sms/send-message", {
+      method: "POST",
+      body: JSON.stringify(emailDetails),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+    const json = await response.json();
+
+    if (!response.ok) {
+      setError(json.error);
+    }
+    if (response.ok) {
+      setError(null);
+    }
+  };
 
   return (
     <div className="form-container">

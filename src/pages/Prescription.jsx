@@ -5,6 +5,7 @@ import "../styles/payment.css"; // Assuming this file already exists for custom 
 import { useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import { useStudentContext } from "../hooks/useStudentContext";
+import PdfComp from "./PdfComp";
 
 const Prescription = () => {
   const { id } = useParams();
@@ -18,12 +19,14 @@ const Prescription = () => {
   const [error, setError] = useState(null);
   const [hostName, setHostName] = useState("");
   const navigate = useNavigate();
-  const [file, setFile] = useState(null);
-  const [filePreview, setFilePreview] = useState(null);
-  const [medicine ,setMedicine] = useState("")
-  const [phone ,  setPhone  ] = useState("")
 
+  const [medicine, setMedicine] = useState("");
+  const [phone, setPhone] = useState("");
 
+  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfPreview, setPdfPreview] = useState(null);
+
+  const [file, setFile] = useState("");
 
 
   const fetchSiteDetails = async () => {
@@ -39,7 +42,7 @@ const Prescription = () => {
     if (response.ok) {
       // Check every second (adjust as needed)
     } else {
-      console.log("error");
+   //   console.log("error");
     }
   };
 
@@ -59,8 +62,6 @@ const Prescription = () => {
     }
   };
 
-  
-
   const fetchPatients = async () => {
     try {
       const response = await fetch(
@@ -69,23 +70,24 @@ const Prescription = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const data = await response.json();
-      setPhone(data.patient.phone)
-      console.log("json",data)
-  
+      setPhone(data.patient.phone);
+    //  console.log("json", data);
     } catch (error) {
       console.error(error);
     }
   };
   useEffect(() => {
     fetchPatients();
-  
   }, []);
-  console.log("phone",phone)
+
+//  console.log("1file", file);
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //console.log("Form submitted");
   
     if (!user) {
       setError("You must be logged in");
@@ -99,47 +101,48 @@ const Prescription = () => {
     }
   
     const date = new Date();
+    const channel_ID = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}_${date.getHours()}${date.getMinutes()}${date.getSeconds()}`; // Generate channel_ID
   
     // Use FormData to append fields and the file
     const formData = new FormData();
-    formData.append('inst_ID', inst_ID);
-    formData.append('patient_ID', id);
-    formData.append('doctor_Name', doctor_Name);
-    formData.append('sick', sick);
-    formData.append('date', date);
-    formData.append('image', image); // if the image is a file, append like a file
-    formData.append('description', description);
-    //formData.append('file', file); // Append the file
-    formData.append('medicine', medicine);
+    formData.append("inst_ID", inst_ID);
+    formData.append("patient_ID", id);
+    formData.append("doctor_Name", doctor_Name);
+    formData.append("sick", sick);
+    formData.append("date", date);
+    formData.append("image", image);
+    formData.append("description", description);
+    formData.append("medicine", medicine);
+    formData.append("file", file);
+    formData.append("channel_ID", channel_ID); // Append the channel_ID
   
     try {
       const response = await fetch(
         "https://hospital-management-tnwh.onrender.com/api/channelHistory/createChannelHistory",
         {
           method: "POST",
-          body: formData, 
+          body: formData,
           headers: {
-            Authorization: `Bearer ${user.token}`, // No 'Content-Type', browser automatically sets it to multipart/form-data
+            Authorization: `Bearer ${user.token}`,
           },
         }
       );
   
       const json = await response.json();
-      console.log("json", json);
+      await uploadFile(formData); // Call uploadFile with the same formData
   
       if (!response.ok) {
         setError(json.error);
         return;
       }
-      if (response.ok) {
-        console.log("phone",phone)
-        sendSMS(phone, doctor_Name, description,medicine,date,)
-        setDoctor_Name("");
-        setDescription("");
-        setSick("");
-        setImage("");
-        alert("Patient Details added successfully!");
-      }
+  
+      //console.log("phone", phone);
+      sendSMS(phone, doctor_Name, description, medicine, date);
+      setDoctor_Name("");
+      setDescription("");
+      setSick("");
+      setImage("");
+      alert("Patient Details added successfully!");
   
       setError(null);
     } catch (err) {
@@ -147,36 +150,48 @@ const Prescription = () => {
       setError(err.message);
     }
   };
+
+  const uploadFile = async (formData) => {
+   // console.log("hello")
+    try {
+      const fileUploadResponse = await fetch(
+        "https://hospital-management-tnwh.onrender.com/api/upload/upload-files",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
   
+      const jsonResponse = await fileUploadResponse.json();
+      //console.log("jsonResponse:", jsonResponse);
+      
+      if (!fileUploadResponse.ok) {
+        console.error("File upload failed:", jsonResponse.error);
+        throw new Error(jsonResponse.error);
+      }
+  
+    //  console.log("File uploaded successfully:", jsonResponse);
+    } catch (err) {
+      console.error("Error uploading file:", err.message);
+      throw err; // Rethrow to handle it in the main submit function
+    }
+  };
+
   const handleGoBack = () => {
     navigate(-1);
   };
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      
-      // Preview logic for image
-      if (selectedFile.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFilePreview(reader.result); // Set image preview
-        };
-        reader.readAsDataURL(selectedFile);
-      } else {
-        setFilePreview(null); // No preview for non-image files
-      }
-    }
-  };
-  const sendSMS = async (phone, doctor_Name, description,medicine,date,) => {
+  const sendSMS = async (phone, doctor_Name, description, medicine, date) => {
     if (!user) {
       setError("You must be logged in");
       return;
     }
-    console.log("phone",phone)
+   // console.log("phone", phone);
     const to = phone;
- 
+
     const message = `Dear Patient, 
 
     Your recent consultation with Dr. ${doctor_Name} on ${date} has been completed. Here are the details:
@@ -189,11 +204,10 @@ const Prescription = () => {
     Take care and get well soon!
     
     Regards,`;
-    
 
-    const emailDetails = { to, message,inst_ID };
+    const emailDetails = { to, message, inst_ID };
 
-    console.log("emailDetails",emailDetails)
+   // console.log("emailDetails", emailDetails);
 
     const response = await fetch("https://hospital-management-tnwh.onrender.com/api/sms/send-message", {
       method: "POST",
@@ -204,7 +218,7 @@ const Prescription = () => {
       },
     });
     const json = await response.json();
-    console.log(json)
+    //console.log(json);
 
     if (!response.ok) {
       setError(json.error);
@@ -409,27 +423,35 @@ const Prescription = () => {
               )}
             </div>
 
-          
-
-            {/* <div className="formGroup" style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "8px", fontSize: "1rem", color: "#333" }}>File (Image or PDF):</label>
+            <div className="formGroup" style={{ marginBottom: "15px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontSize: "1rem",
+                  color: "#333",
+                }}
+              >
+                File(Optional):
+              </label>
               <input
                 type="file"
-                accept=".jpg, .png, .jpeg, .pdf"
-                onChange={handleFileChange}
+                accept="application/pdf"
+                onChange={(e)=> setFile(e.target.files[0])}
                 style={{ fontSize: "1rem" }}
               />
-              {file && file.type === "application/pdf" && (
+              {pdfPreview && (
                 <div style={{ marginTop: "10px" }}>
-                  <a href={URL.createObjectURL(file)} target="_blank" rel="noopener noreferrer">View PDF</a>
+                  <a
+                    href={pdfPreview}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View PDF
+                  </a>
                 </div>
               )}
-              {filePreview && (
-                <div style={{ marginTop: "10px" }}>
-                  <img src={filePreview} alt="Uploaded Preview" style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px" }} />
-                </div>
-              )}
-              </div> */}
+            </div>
 
             <div
               className="buttonContainer"

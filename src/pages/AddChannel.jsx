@@ -58,21 +58,34 @@ const CreateChannel = () => {
   }, [patientIds]);
   
   const channelIDMaker = () => {
-    const timestamp = new Date().getTime(); // Get the current timestamp in milliseconds
-    const channelID = `CID${timestamp}`; // Concatenate CID with the timestamp
+    const now = new Date(); // Get the current date and time
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Get month (01-12)
+    const day = String(now.getDate()).padStart(2, '0'); // Get day (01-31)
+    const time = now.toTimeString().slice(0, 5).replace(":", ""); // Format: HHMM
+    const channelID = `CID${month}${day}T${time}`; // Concatenate CID with formatted month, day, and time
     return channelID;
   };
+  
+  
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("gg")
     if (!user) {
       setError("You must be logged in");
       return;
     }
-
-    // Form validation
+    
+    console.log("Missing fields:", {
+      patient_ID,
+      doctor_ID,
+      date,
+      time,
+      room,
+    });
+        // Form validation
     if ( !patient_ID || !doctor_ID || !date || !time || !room) {
       setError("All fields are required");
       return;
@@ -96,7 +109,7 @@ const CreateChannel = () => {
       time,
       room
     };
-
+    console.log("object",channel)
     try {
       const response = await fetch("https://hospital-management-tnwh.onrender.com/api/channels/createChannel", {
         method: "POST",

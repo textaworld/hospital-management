@@ -13,8 +13,8 @@ const Clz = () => {
   const [newPackageStatus, setNewPackageStatus] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const userRole = user.role
-  console.log("user",user)
+  const userRole = user.role;
+  console.log("user", user);
 
   // Filter doctors based on search query matching doctor ID or name
   const filteredDoctors = doctors.filter((doc) => {
@@ -224,26 +224,39 @@ const Clz = () => {
                     <td>{clz.doctorEmail}</td>
                     <td>{clz.doctorPhone}</td>
                     <td>
-                      <Link
-                        to={`/headOfficeHome/doctorIncome/${clz._id}`}
-                        className="btn btn-success"
-                      >
-                        <FaMoneyBill />
-                      </Link>
+                      {userRole === "HEAD_OFFICE_ADMIN" ? (
+                        <Link
+                          to={`/headOfficeHome/doctorIncome/${clz._id}`}
+                          className="btn btn-success"
+                        >
+                          <FaMoneyBill />
+                        </Link>
+                      ) : (
+                        <Link
+                          to={`/doctorIncome/${clz._id}`}
+                          className="btn btn-success"
+                        >
+                          <FaMoneyBill />
+                        </Link>
+                      )}
                     </td>
+                    Z
                     <td>
-                    {
-  userRole === "HEAD_OFFICE_ADMIN" ? (
-    <Link to={`/headOfficeHome/updateClz/${clz._id}`} className="btn btn-success">
-      <FaEdit />
-    </Link>
-  ) : (
-    <Link to={`/updateClz/${clz._id}`} className="btn btn-success">
-      <FaEdit />
-    </Link>
-  )
-}
-
+                      {userRole === "HEAD_OFFICE_ADMIN" ? (
+                        <Link
+                          to={`/headOfficeHome/updateClz/${clz._id}`}
+                          className="btn btn-success"
+                        >
+                          <FaEdit />
+                        </Link>
+                      ) : (
+                        <Link
+                          to={`/updateClz/${clz._id}`}
+                          className="btn btn-success"
+                        >
+                          <FaEdit />
+                        </Link>
+                      )}
                     </td>
                     <td>
                       <Link
