@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDb = require("./config/db");
+const path = require('path'); // Add this line
 
 // import routes
 const SuperAdminRoutes = require("./routes/superAdminRoutes");
@@ -20,6 +21,7 @@ const SmsRouter = require("./routes/smsRoutes");
 const ChannelRouter = require("./routes/channelRoute");
 const ChannelHistoryRouter = require("./routes/channelHistoryRoutes");
 const CardRouter = require("./routes/CardRoutes")
+const fileUploader = require("./controllers/fileUploader")
 
 
 
@@ -39,7 +41,7 @@ app.use((req, res, next) => {
   next();
 });
 //-------
-
+app.use("/files", express.static(path.join(__dirname, 'files')));
 // Routes
 app.use("/api/superAdmin", SuperAdminRoutes);
 app.use("/api/institute", InstituteRoutes);
@@ -56,8 +58,9 @@ app.use("/api/sms",SmsRouter);
 app.use("/api/channels",ChannelRouter);
 app.use("/api/channelHistory",ChannelHistoryRouter);
 app.use("/api/card",CardRouter);
+app.use("/api/upload", fileUploader)
 
-CardRouter
+
 // connect to db
 connectDb();
 

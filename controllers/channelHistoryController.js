@@ -2,54 +2,52 @@ const ChannelHistoryModel = require("../models/ChannelHistory");
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const mongoose = require("mongoose");
+const PdfDetails = require("../models/pdfModel"); 
 
-// Set up multer for file storage
- const storage = multer.memoryStorage(); // Store files in memory, or use diskStorage to save to disk
 
-const upload = multer({ storage: storage });
-const uploadFile = upload.single('file');
+
+
 const createChannelHistory = async (req, res) => {
   try {
+    // Uploading file using multer
+    // Extract the form fields
     const {
+      channel_ID,
       inst_ID,
       patient_ID,
       doctor_Name,
       date,
       sick,
-      description,
-      medicine
-    } = req.body;
-
-    const file = req.file; // Access the uploaded file
-
-    console.log("file", file);
-    console.log("medicine", medicine);
-
-    if (file) {
-      console.log("Uploaded file name:", file.originalname);
-      console.log("Uploaded file buffer:", file.buffer); // This is where the file data is stored
-    }
-
-    const newChannelHistory = new ChannelHistoryModel({
-      inst_ID,
-      patient_ID,
-      doctor_Name,
-      date,
-      sick,
-      image: req.body.image, // Assuming 'image' is also in the body, not a file
       description,
       medicine,
-      file: file ? file.originalname : null, // Store the file name or handle it accordingly
+    } = req.body;
+
+    // Create a new ChannelHistory with PDF details if present
+    const newChannelHistory = new ChannelHistoryModel({
+      inst_ID,
+      channel_ID,
+      patient_ID,
+      doctor_Name,
+      date,
+      sick,
+      image: req.body.image, 
+      description,
+      medicine,
     });
 
     const savedChannelHistory = await newChannelHistory.save();
+    console.log("savedChannelHistory", savedChannelHistory);
     res.json(savedChannelHistory);
-
   } catch (err) {
-    console.error('Error saving channel history:', err.message); 
+    console.error("Error saving channel history:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
+
+
+
+
 
 const downloadFile = (req, res) => {
   const fileName = req.params.fileName;
@@ -166,5 +164,5 @@ module.exports = {
   deleteChannelHistory,
   getChannelHistoryByPatient_ID,
   downloadFile,
-  uploadFile
+  
 };
