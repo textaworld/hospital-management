@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import "../styles/payment.css"; // Assuming this file already exists for custom styles
-import { useParams } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
-import { useStudentContext } from "../hooks/useStudentContext";
-import PdfComp from "./PdfComp";
+
 
 const Prescription = () => {
   const { id } = useParams();
