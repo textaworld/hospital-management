@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePaymentContext } from "../hooks/usePaymentContext";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -9,17 +9,17 @@ const UpdateChannel = () => {
   const { id } = useParams();
   const { dispatch } = usePaymentContext();
   const { user } = useAuthContext();
-    const [drID,setDr_ID] = useState("")
-    const [channelID,setChannelID] = useState("")
-    const [date,setDate] = useState("")
-    const [patientID,setPatientID] = useState("")
-    const [room,setRoom] = useState("")
-    const [time,setTime] = useState("")
-    const [drName, setDRName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [name, setName] = useState("");
-    const [hosName, setHosName] = useState("");
-  const inst_ID =user.instituteId;
+  const [drID, setDr_ID] = useState("");
+  const [channelID, setChannelID] = useState("");
+  const [date, setDate] = useState("");
+  const [patientID, setPatientID] = useState("");
+  const [room, setRoom] = useState("");
+  const [time, setTime] = useState("");
+  const [drName, setDRName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [hosName, setHosName] = useState("");
+  const inst_ID = user.instituteId;
   const navigate = useNavigate();
 
   const [error, setError] = useState(null);
@@ -28,27 +28,25 @@ const UpdateChannel = () => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(
-          "https://hospital-management-tnwh.onrender.com/api/channels/getChannelById/" + id,
+          "https://hospital-management-tnwh.onrender.com/api/channels/getChannelById/" +
+            id,
           {
             headers: { Authorization: `Bearer ${user.token}` },
           }
         );
         const json = await response.json();
-       // console.log("json",json)
-
+        // console.log("json",json)
 
         if (response.ok) {
           setDr_ID(json.doctor_ID);
           setChannelID(json.channel_ID);
-          setDate(json.date)
-         setPatientID(json.patient_ID);
+          setDate(json.date);
+          setPatientID(json.patient_ID);
           setRoom(json.room);
           setTime(json.time);
           // setFees(json.classFees);
-
         }
       } catch (error) {
-        
         // Handle the error as needed
       }
     };
@@ -58,7 +56,6 @@ const UpdateChannel = () => {
     }
   }, [dispatch, user, id]);
 
-  
   const fetchDoctor = async () => {
     try {
       const response = await fetch(
@@ -67,10 +64,9 @@ const UpdateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
-      setDRName(json.name)
-  
+      setDRName(json.name);
     } catch (error) {
       console.error(error);
     }
@@ -80,8 +76,7 @@ const UpdateChannel = () => {
     fetchDoctor();
     fetchUser();
     fetchHospital();
-  
-  }, [patientID,drID]);
+  }, [patientID, drID]);
 
   const fetchUser = async () => {
     try {
@@ -91,11 +86,10 @@ const UpdateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
-      setPhone(json.phone)
-      setName(json.name)
-  
+      setPhone(json.phone);
+      setName(json.name);
     } catch (error) {
       console.error(error);
     }
@@ -109,10 +103,9 @@ const UpdateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
-      setHosName(json.name)
-  
+      setHosName(json.name);
     } catch (error) {
       console.error(error);
     }
@@ -132,35 +125,42 @@ const UpdateChannel = () => {
             doctor_ID: drID,
             patient_ID: patientID,
             channel_ID: channelID,
-            date:date ,
-            room: room, 
-            time:time
+            date: date,
+            room: room,
+            time: time,
           }),
         }
       );
-  
+
       const json = await response.json();
- 
-  
+
       if (response.ok) {
-        sendSMS(phone, channelID, name,room,time,date,hosName)
-        navigate("/channels"); 
+        sendSMS(phone, channelID, name, room, time, date, hosName);
+        navigate("/channels");
       } else {
-        setError(json.error); 
+        setError(json.error);
       }
     } catch (error) {
       console.error(error);
     }
   };
-  
-  const sendSMS = async (phone, channel_ID, name,room,time,date,hosName) => {
+
+  const sendSMS = async (
+    phone,
+    channel_ID,
+    name,
+    room,
+    time,
+    date,
+    hosName
+  ) => {
     if (!user) {
       setError("You must be logged in");
       return;
     }
 
     const to = phone;
- 
+
     const message = `
     ${hosName}
     
@@ -172,19 +172,20 @@ const UpdateChannel = () => {
     Time: ${time}
     Channel ID: ${channel_ID}
     Thank you.`;
-    
 
-    const emailDetails = { to, message,inst_ID };
+    const emailDetails = { to, message, inst_ID };
 
-
-    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/sms/send-message", {
-      method: "POST",
-      body: JSON.stringify(emailDetails),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const response = await fetch(
+      "https://hospital-management-tnwh.onrender.com/api/sms/send-message",
+      {
+        method: "POST",
+        body: JSON.stringify(emailDetails),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
     const json = await response.json();
 
     if (!response.ok) {
@@ -199,7 +200,7 @@ const UpdateChannel = () => {
     <div className="form-container">
       <form
         onSubmit={(e) => {
-          e.preventDefault(); 
+          e.preventDefault();
           updateStudent();
         }}
       >
@@ -235,15 +236,14 @@ const UpdateChannel = () => {
           <input
             value={patientID}
             type="text"
-
             className="form-control"
             onChange={(e) => setPatientID(e.target.value)}
           />
         </div>
-      
+
         <div className="form-input">
           <label htmlFor="" className="form-label">
-            Room 
+            Room
           </label>
           <input
             value={room}
@@ -252,22 +252,19 @@ const UpdateChannel = () => {
             onChange={(e) => setRoom(e.target.value)}
           />
         </div>
-      
+
         <div className="form-input">
           <label htmlFor="" className="form-label">
-          Time
+            Time
           </label>
           <input
             value={time}
             type="time"
-
             className="form-control"
             onChange={(e) => setTime(e.target.value)}
           />
         </div>
-        
-          
-        
+
         <button type="submit" className="form-button">
           Submit
         </button>
