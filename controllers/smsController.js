@@ -12,7 +12,7 @@ const sendSMS = async (req, res) => {
 
         const user_id = "26730";
         const api_key = "tmGnA2446kmhvuUHjyHl";
-        const sender_id = "EDU TEXTA";
+        const sender_id = "EHOS Texta";
        // const _id = id
 
 
@@ -23,7 +23,7 @@ const sendSMS = async (req, res) => {
         }
 
         // Construct the URL
-        const url = `https://app.notify.lk/api/v1/send`;
+        const url = https://app.notify.lk/api/v1/send;
 
         // Construct the request payload
         const payload = {
