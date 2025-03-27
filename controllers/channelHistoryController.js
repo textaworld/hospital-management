@@ -1,12 +1,9 @@
 const ChannelHistoryModel = require("../models/ChannelHistory");
-const path = require('path');
-const fs = require('fs');
-const multer = require('multer');
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
 const mongoose = require("mongoose");
-const PdfDetails = require("../models/pdfModel"); 
-
-
-
+const PdfDetails = require("../models/pdfModel");
 
 const createChannelHistory = async (req, res) => {
   try {
@@ -31,7 +28,7 @@ const createChannelHistory = async (req, res) => {
       doctor_Name,
       date,
       sick,
-      image: req.body.image, 
+      image: req.body.image,
       description,
       medicine,
     });
@@ -45,13 +42,9 @@ const createChannelHistory = async (req, res) => {
   }
 };
 
-
-
-
-
 const downloadFile = (req, res) => {
   const fileName = req.params.fileName;
-  const filePath = path.join(__dirname, '../uploads', fileName);
+  const filePath = path.join(__dirname, "../uploads", fileName);
 
   // Check if the file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {
@@ -69,8 +62,7 @@ const downloadFile = (req, res) => {
 };
 
 const getAllChannelHistories = (req, res) => {
-  ChannelHistoryModel
-    .find()
+  ChannelHistoryModel.find()
     .then((channelHistories) => res.json(channelHistories))
     .catch((err) => res.json({ error: err.message }));
 };
@@ -78,8 +70,7 @@ const getAllChannelHistories = (req, res) => {
 const getChannelHistoryById = (req, res) => {
   const channelHistory_ID = req.params.id;
 
-  ChannelHistoryModel
-    .findById(channelHistory_ID)
+  ChannelHistoryModel.findById(channelHistory_ID)
     .then((channelHistory) => {
       if (!channelHistory) {
         return res.status(404).json({ error: "Channel history not found" });
@@ -100,25 +91,24 @@ const updateChannelHistory = (req, res) => {
     image,
     description,
     medicine,
-      file
+    file,
   } = req.body;
 
-  ChannelHistoryModel
-    .findByIdAndUpdate(
-      channelHistory_ID,
-      {
-        inst_ID,
-        patient_ID,
-        doctor_Name,
-        date,
-        sick,
-        image,
-        description,
-        medicine,
-      file
-      },
-      { new: true }
-    )
+  ChannelHistoryModel.findByIdAndUpdate(
+    channelHistory_ID,
+    {
+      inst_ID,
+      patient_ID,
+      doctor_Name,
+      date,
+      sick,
+      image,
+      description,
+      medicine,
+      file,
+    },
+    { new: true }
+  )
     .then((updatedChannelHistory) => {
       if (!updatedChannelHistory) {
         return res.status(404).json({ error: "Channel history not found" });
@@ -131,8 +121,7 @@ const updateChannelHistory = (req, res) => {
 const deleteChannelHistory = (req, res) => {
   const channelHistory_ID = req.params.id;
 
-  ChannelHistoryModel
-    .findByIdAndDelete(channelHistory_ID)
+  ChannelHistoryModel.findByIdAndDelete(channelHistory_ID)
     .then((deletedChannelHistory) => {
       if (!deletedChannelHistory) {
         return res.status(404).json({ error: "Channel history not found" });
@@ -145,11 +134,12 @@ const deleteChannelHistory = (req, res) => {
 const getChannelHistoryByPatient_ID = (req, res) => {
   const patient_ID = req.params.id;
 
-  ChannelHistoryModel
-    .find({ patient_ID })
+  ChannelHistoryModel.find({ patient_ID })
     .then((channelHistories) => {
       if (channelHistories.length === 0) {
-        return res.status(404).json({ error: "No channel history found for this patient" });
+        return res
+          .status(404)
+          .json({ error: "No channel history found for this patient" });
       }
       res.json(channelHistories);
     })
@@ -164,5 +154,4 @@ module.exports = {
   deleteChannelHistory,
   getChannelHistoryByPatient_ID,
   downloadFile,
-  
 };
