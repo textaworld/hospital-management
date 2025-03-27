@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { usePaymentContext } from "../hooks/usePaymentContext";
-import { useAuthContext } from "../hooks/useAuthContext";
 import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { usePaymentContext } from "../hooks/usePaymentContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
 import "../styles/payment.css";
-import "jspdf-autotable";
-import html2canvas from "html2canvas";
 
 const CreatePayment = () => {
   const { id } = useParams();
@@ -14,37 +13,37 @@ const CreatePayment = () => {
   const { dispatch } = usePaymentContext();
   const { user } = useAuthContext();
   const { sitedetail, dispatch: institute } = useSiteDetailsContext();
- // const [instNotification, setInstNotification] = useState("");
+  // const [instNotification, setInstNotification] = useState("");
   const instID = user.instituteId;
   const [name, setName] = useState("");
   const [std_ID, setStd_ID] = useState("");
   const [amount, setAmount] = useState("");
   const [error, setError] = useState(null);
   const [submissionSuccess, setSubmissionSuccess] = useState(false); // State for tracking submission success
-  const [channel_ID,setChannelID] = useState("");
-  const [remainingSMSCount, setRemainingSMSCount] = useState(0); 
-  const [userPhone,setUserhone] = useState("");
-  const [drName,setDRName] = useState("");
-  const [logo,setLogo] =useState("")
-  const [hosName,setHosName] =useState("")
+  const [channel_ID, setChannelID] = useState("");
+  const [remainingSMSCount, setRemainingSMSCount] = useState(0);
+  const [userPhone, setUserhone] = useState("");
+  const [drName, setDRName] = useState("");
+  const [logo, setLogo] = useState("");
+  const [hosName, setHosName] = useState("");
   const [qrImage, setQrImage] = useState("");
-  const [hosPhone,setHosPhone] = useState("")
+  const [hosPhone, setHosPhone] = useState("");
   useEffect(() => {
-
-    const TopP = sitedetail.topUpPrice
-    const SMSP = sitedetail.smsPrice
+    const TopP = sitedetail.topUpPrice;
+    const SMSP = sitedetail.smsPrice;
 
     // console.log(TopP)
     // console.log(SMSP)
 
     // console.log(sitedetail.topUpPrice / sitedetail.smsPrice)
 
-    const remSmsCount =parseInt((sitedetail.topUpPrice / sitedetail.smsPrice) - sitedetail.smsCount)
+    const remSmsCount = parseInt(
+      sitedetail.topUpPrice / sitedetail.smsPrice - sitedetail.smsCount
+    );
     setRemainingSMSCount(remSmsCount);
-  }, [sitedetail.smsPrice, sitedetail.topUpPrice , sitedetail.smsCount]);
+  }, [sitedetail.smsPrice, sitedetail.topUpPrice, sitedetail.smsCount]);
 
   //console.log(remainingSMSCount)
-
 
   useEffect(() => {
     const fetchSiteDetails = async () => {
@@ -56,17 +55,16 @@ const CreatePayment = () => {
           }
         );
         const siteDetailsJson = await siteDetailsResponse.json();
-       // console.log("site",siteDetailsJson)
+        // console.log("site",siteDetailsJson)
         setLogo(siteDetailsJson.image);
-        setHosName(siteDetailsJson.name)
-        setHosPhone(siteDetailsJson.phone)
+        setHosName(siteDetailsJson.name);
+        setHosPhone(siteDetailsJson.phone);
         if (siteDetailsResponse.ok) {
           // setInstNotification(siteDetailsJson.notification);
           institute({ type: "SET_SITE_DETAILS", payload: siteDetailsJson });
-          
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     };
 
@@ -79,24 +77,37 @@ const CreatePayment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    generateQrCode()
+    generateQrCode();
     if (!user) {
       setError("You must be logged in");
       return;
     }
-  
+
     // Form validation
     if (!name || !std_ID || !amount) {
       setError("All fields are required");
       return;
     }
-  
-    const status = 'paid';
-  
+
+    const status = "paid";
+
     const date = new Date();
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const month = monthNames[date.getMonth()]; 
-  
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const month = monthNames[date.getMonth()];
+
     const payment = {
       inst_ID: instID,
       doctor_ID: name,
@@ -104,11 +115,11 @@ const CreatePayment = () => {
       amount,
       channel_ID: channel_ID,
       date,
-      month, 
-      status
+      month,
+      status,
     };
-  
-    if(qrImage){
+
+    if (qrImage) {
       const response = await fetch(
         "https://hospital-management-tnwh.onrender.com/api/payments/createPayment",
         {
@@ -122,58 +133,52 @@ const CreatePayment = () => {
       );
 
       const json = await response.json();
-    // console.log("payment", json);
+      // console.log("payment", json);
 
-    if(response.ok){
-      //generateQrCode()
-      generatePDF()
-      if (remainingSMSCount >= 10) {
-        sendSMS(userPhone, amount, std_ID,channel_ID,drName);
-      } else {
-        alert("Your SMS account balance is low. Please Topup");
+      if (response.ok) {
+        //generateQrCode()
+        generatePDF();
+        if (remainingSMSCount >= 10) {
+          sendSMS(userPhone, amount, std_ID, channel_ID, drName);
+        } else {
+          alert("Your SMS account balance is low. Please Topup");
+        }
       }
-    }
-  
-    if (!response.ok) {
-      setError(json.error);
-      return;
-    }
-    setError(null);
-    setSubmissionSuccess(true);
 
-    dispatch({ type: "CREATE_PAYMENT", payload: json });
+      if (!response.ok) {
+        setError(json.error);
+        return;
+      }
+      setError(null);
+      setSubmissionSuccess(true);
 
+      dispatch({ type: "CREATE_PAYMENT", payload: json });
     }
-    
-  
-    
-  
-
   };
 
   const fetchUser = async () => {
     try {
       //console.log("std_ID",std_ID)
-      const response = await fetch(`https://hospital-management-tnwh.onrender.com/api/patients/searchPatientByPatient_ID/${std_ID}`,
+      const response = await fetch(
+        `https://hospital-management-tnwh.onrender.com/api/patients/searchPatientByPatient_ID/${std_ID}`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
       //console.log("user", json);
-      setUserhone(json.phone)
-  
+      setUserhone(json.phone);
     } catch (error) {
       console.error(error);
     }
   };
-  
+
   useEffect(() => {
     fetchUser();
   }, [name]);
 
-  const sendSMS = async (phone, amount ,std_ID,channel_ID,drName) => {
+  const sendSMS = async (phone, amount, std_ID, channel_ID, drName) => {
     if (!user) {
       setError("You must be logged in");
       return;
@@ -191,17 +196,20 @@ const CreatePayment = () => {
     Time : ${colomboTime}.
     Thank you!`;
 
-    const emailDetails = { to, message,inst_ID:instID };
+    const emailDetails = { to, message, inst_ID: instID };
     //console.log(instID)
 
-    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/sms/send-message", {
-      method: "POST",
-      body: JSON.stringify(emailDetails),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const response = await fetch(
+      "https://hospital-management-tnwh.onrender.com/api/sms/send-message",
+      {
+        method: "POST",
+        body: JSON.stringify(emailDetails),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
     const json = await response.json();
 
     if (!response.ok) {
@@ -218,23 +226,21 @@ const CreatePayment = () => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(
-          "https://hospital-management-tnwh.onrender.com/api/doctors/searchDoctorByDoctor_ID/" + name,
+          "https://hospital-management-tnwh.onrender.com/api/doctors/searchDoctorByDoctor_ID/" +
+            name,
           {
             headers: { Authorization: `Bearer ${user.token}` },
           }
         );
         const json = await response.json();
-      // console.log("docote",json)
+        // console.log("docote",json)
 
         if (response.ok) {
-          setDRName(json.name)
-        
-
+          setDRName(json.name);
 
           dispatch({ type: "SET_DOCTOR", payload: json });
         }
       } catch (error) {
-        
         // Handle the error as needed
       }
     };
@@ -242,27 +248,27 @@ const CreatePayment = () => {
     if (user) {
       fetchStudents();
     }
-  }, [dispatch, user, id,qrImage]);
+  }, [dispatch, user, id, qrImage]);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(
-          "https://hospital-management-tnwh.onrender.com/api/channels/getChannelById/" + id,
+          "https://hospital-management-tnwh.onrender.com/api/channels/getChannelById/" +
+            id,
           {
             headers: { Authorization: `Bearer ${user.token}` },
           }
         );
         const json = await response.json();
-       // console.log(json)
+        // console.log(json)
 
         if (response.ok) {
-          setStd_ID(json. patient_ID);
+          setStd_ID(json.patient_ID);
           setName(json.doctor_ID);
           setChannelID(json.channel_ID);
         }
       } catch (error) {
-        
         // Handle the error as needed
       }
     };
@@ -272,97 +278,99 @@ const CreatePayment = () => {
     }
   }, [user, id]);
 
-//console.log("qrImage",qrImage)
+  //console.log("qrImage",qrImage)
 
-const generatePDF = () => {
-  // Define custom PDF size (A5 size in mm: 148 x 210)
-  const doc = new jsPDF({
-    orientation: 'portrait', // 'portrait' or 'landscape'
-    unit: 'mm',              // The units (options: 'pt', 'mm', 'cm', 'in')
-    format: [148, 210],       // Custom size [width, height]
-  });
+  const generatePDF = () => {
+    // Define custom PDF size (A5 size in mm: 148 x 210)
+    const doc = new jsPDF({
+      orientation: "portrait", // 'portrait' or 'landscape'
+      unit: "mm", // The units (options: 'pt', 'mm', 'cm', 'in')
+      format: [148, 210], // Custom size [width, height]
+    });
 
-  doc.setFont("Times", "normal");
+    doc.setFont("Times", "normal");
 
-  const colomboTime = new Date().toLocaleString("en-US", {
-    timeZone: "Asia/Colombo",
-  });
+    const colomboTime = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Colombo",
+    });
 
-  if (qrImage) {
-    doc.addImage(qrImage, "PNG", 10, 10, 20, 20); 
-  }
+    if (qrImage) {
+      doc.addImage(qrImage, "PNG", 10, 10, 20, 20);
+    }
 
-  // Add logo to the top-right corner
-  if (logo) {
-    const img = new Image();
-    img.src = logo;
-    img.onload = () => {
-      doc.addImage(img, "JPEG", 120, 10, 20, 20); // Adjusted for smaller width
+    // Add logo to the top-right corner
+    if (logo) {
+      const img = new Image();
+      img.src = logo;
+      img.onload = () => {
+        doc.addImage(img, "JPEG", 120, 10, 20, 20); // Adjusted for smaller width
+        createPDFContent();
+      };
+    } else {
       createPDFContent();
-    };
-  } else {
-    createPDFContent();
-  }
+    }
 
-  function createPDFContent() {
-    const pdfWidth = doc.internal.pageSize.getWidth();
-    const text = `${hosName}`;
-    const textWidth = doc.getTextWidth(text);
-    const xPosition = (pdfWidth - textWidth) / 2;
+    function createPDFContent() {
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const text = `${hosName}`;
+      const textWidth = doc.getTextWidth(text);
+      const xPosition = (pdfWidth - textWidth) / 2;
 
-    const invoiceTextWidth = doc.getTextWidth("Hospital Invoice");
-    const xPositionInvo = (pdfWidth - invoiceTextWidth) / 2;
+      const invoiceTextWidth = doc.getTextWidth("Hospital Invoice");
+      const xPositionInvo = (pdfWidth - invoiceTextWidth) / 2;
 
-    doc.setFontSize(20);
-    doc.text(text, xPosition, 20);
-    doc.setFontSize(10);
-    doc.text(`Telephone: ${hosPhone}`, xPosition, 25);
-    // doc.setFontSize(15);
-    // doc.text("Hospital Invoice", xPositionInvo, 30);
+      doc.setFontSize(20);
+      doc.text(text, xPosition, 20);
+      doc.setFontSize(10);
+      doc.text(`Telephone: ${hosPhone}`, xPosition, 25);
+      // doc.setFontSize(15);
+      // doc.text("Hospital Invoice", xPositionInvo, 30);
 
-    doc.setLineWidth(0.5);
-    doc.setLineDash([1, 2], 0); 
-    doc.line(10, 40, pdfWidth - 10, 40);
+      doc.setLineWidth(0.5);
+      doc.setLineDash([1, 2], 0);
+      doc.line(10, 40, pdfWidth - 10, 40);
 
-    // Add patient and doctor details
-    doc.setFontSize(12);
-    doc.text(`Patient ID: ${std_ID}`, 10, 70);
-    doc.text(`Doctor Name: Dr. ${drName}`, 10, 80);
-    doc.text(`Channel ID: ${channel_ID}`, 10, 90);
-    doc.text(`Date: ${colomboTime}`, 10, 50);
+      // Add patient and doctor details
+      doc.setFontSize(12);
+      doc.text(`Patient ID: ${std_ID}`, 10, 70);
+      doc.text(`Doctor Name: Dr. ${drName}`, 10, 80);
+      doc.text(`Channel ID: ${channel_ID}`, 10, 90);
+      doc.text(`Date: ${colomboTime}`, 10, 50);
 
-    doc.setLineDash([1, 1], 0);
-    doc.line(10, 100, pdfWidth - 10, 100);
+      doc.setLineDash([1, 1], 0);
+      doc.line(10, 100, pdfWidth - 10, 100);
 
-    doc.setFontSize(15);
+      doc.setFontSize(15);
 
-    doc.text(`Total: Rs. ${amount}`, 10, 110);
+      doc.text(`Total: Rs. ${amount}`, 10, 110);
 
-    doc.setFontSize(15);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Thank you!", xPosition, 120);
+      doc.setFontSize(15);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Thank you!", xPosition, 120);
 
-    doc.save(`${std_ID}_invoice.pdf`);
-  }
-};
-
+      doc.save(`${std_ID}_invoice.pdf`);
+    }
+  };
 
   const generateQrCode = async () => {
     try {
       // Check if any of the required fields are null or empty
       //console.log("qr triggered")
-      const  patient_ID = std_ID
+      const patient_ID = std_ID;
       const student = { patient_ID };
 
-     // console.log("std",student)
-      const response = await fetch("https://hospital-management-tnwh.onrender.com/api/qr/qrGenerator", {
-        method: "POST",
-        body: JSON.stringify(student),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      // console.log("std",student)
+      const response = await fetch(
+        "https://hospital-management-tnwh.onrender.com/api/qr/qrGenerator",
+        {
+          method: "POST",
+          body: JSON.stringify(student),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
 
       //console.log("resp",response)
       if (!response.ok) {
@@ -383,8 +391,9 @@ const generatePDF = () => {
     <div className="container">
       <div className="form-wrapper">
         <form onSubmit={handleSubmit}>
-          <h2 style={{justifyContent:'center', display:'flex'}}>Make Payments</h2>
-      
+          <h2 style={{ justifyContent: "center", display: "flex" }}>
+            Make Payments
+          </h2>
           <div className="form-group">
             <label htmlFor="std_ID">Patient ID</label>
             <input
@@ -422,10 +431,8 @@ const generatePDF = () => {
           {submissionSuccess && (
             <div className="success"> submitted successfully!</div>
           )}{" "}
-         
         </form>
       </div>
-      
     </div>
   );
 };

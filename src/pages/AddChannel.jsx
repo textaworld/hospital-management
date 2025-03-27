@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import "../styles/payment.css";
 
@@ -32,52 +32,49 @@ const CreateChannel = () => {
           }
         );
         const json = await response.json();
-  
+
         // Check if data array exists and has items
         if (json && json.data && json.data.length > 0) {
           console.log("Setting patient IDs");
           // Ensure patientIds is set as an array
-          const ids = json.data.map(patient => patient.patient_ID); // Collect all patient IDs into an array
+          const ids = json.data.map((patient) => patient.patient_ID); // Collect all patient IDs into an array
           setPatientIds(ids); // Set the state with the array of patient IDs
         }
       } catch (error) {
         console.log(error);
       }
     };
-  
+
     if (user) {
       fetchStudents();
     }
   }, [user]);
-  
+
   // Log patientIds after it has been updated
   useEffect(() => {
     if (patientIds) {
       console.log("Updated patientIds:", patientIds);
     }
   }, [patientIds]);
-  
+
   const channelIDMaker = () => {
     const now = new Date(); // Get the current date and time
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // Get month (01-12)
-    const day = String(now.getDate()).padStart(2, '0'); // Get day (01-31)
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Get month (01-12)
+    const day = String(now.getDate()).padStart(2, "0"); // Get day (01-31)
     const time = now.toTimeString().slice(0, 5).replace(":", ""); // Format: HHMM
     const channelID = `CID${month}${day}T${time}`; // Concatenate CID with formatted month, day, and time
     return channelID;
   };
-  
-  
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("gg")
+    console.log("gg");
     if (!user) {
       setError("You must be logged in");
       return;
     }
-    
+
     console.log("Missing fields:", {
       patient_ID,
       doctor_ID,
@@ -85,8 +82,8 @@ const CreateChannel = () => {
       time,
       room,
     });
-        // Form validation
-    if ( !patient_ID || !doctor_ID || !date || !time || !room) {
+    // Form validation
+    if (!patient_ID || !doctor_ID || !date || !time || !room) {
       setError("All fields are required");
       return;
     }
@@ -98,7 +95,7 @@ const CreateChannel = () => {
 
     const channel_ID = channelIDMaker();
 
-    console.log(channel_ID)
+    console.log(channel_ID);
 
     const channel = {
       inst_ID,
@@ -107,18 +104,21 @@ const CreateChannel = () => {
       doctor_ID,
       date,
       time,
-      room
+      room,
     };
-    console.log("object",channel)
+    console.log("object", channel);
     try {
-      const response = await fetch("https://hospital-management-tnwh.onrender.com/api/channels/createChannel", {
-        method: "POST",
-        body: JSON.stringify(channel),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await fetch(
+        "https://hospital-management-tnwh.onrender.com/api/channels/createChannel",
+        {
+          method: "POST",
+          body: JSON.stringify(channel),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
 
       const json = await response.json();
 
@@ -127,21 +127,20 @@ const CreateChannel = () => {
         return;
       }
       if (response.ok) {
-        sendSMS(phone, channel_ID, name,room,time,date,hosName)
-        setPatient_ID("")
-        setChannel_ID("")
-        setDoctor_ID("")
-        setDate("")
-        setTime("")
-        setRoom("")
+        sendSMS(phone, channel_ID, name, room, time, date, hosName);
+        setPatient_ID("");
+        setChannel_ID("");
+        setDoctor_ID("");
+        setDate("");
+        setTime("");
+        setRoom("");
         alert("Appoinment added successfully!");
       }
 
       setError(null);
       setSubmissionSuccess(true);
-
     } catch (err) {
-      console.error('Error creating channel:', err.message);
+      console.error("Error creating channel:", err.message);
       setError(err.message);
     }
   };
@@ -154,10 +153,9 @@ const CreateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
-      setHosName(json.name)
-  
+      setHosName(json.name);
     } catch (error) {
       console.error(error);
     }
@@ -171,11 +169,10 @@ const CreateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
-      setPhone(json.phone)
-      setName(json.name)
-  
+      setPhone(json.phone);
+      setName(json.name);
     } catch (error) {
       console.error(error);
     }
@@ -189,16 +186,14 @@ const CreateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
-      setDRName(json.name)
-  
+      setDRName(json.name);
     } catch (error) {
       console.error(error);
     }
   };
-  
-  
+
   const fetchDoctors = async () => {
     try {
       const response = await fetch(
@@ -207,29 +202,26 @@ const CreateChannel = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      
+
       const json = await response.json();
 
       const formattedDoctors = json.data.map((doctor) => ({
         name: doctor.name, // Assuming the doctor object has a 'name' field
         id: doctor.doctor_ID,
       }));
-      
-      setDoctorsList(formattedDoctors);
 
+      setDoctorsList(formattedDoctors);
     } catch (error) {
       console.error(error);
     }
   };
 
-
   useEffect(() => {
     fetchUser();
     fetchDoctor();
     fetchDoctors();
-    fetchHospital()
-  
-  }, [patient_ID,doctor_ID]);
+    fetchHospital();
+  }, [patient_ID, doctor_ID]);
 
   const handleInputChange = (e) => {
     const input = e.target.value;
@@ -245,19 +237,27 @@ const CreateChannel = () => {
       setShowSuggestions(false);
     }
   };
-  
+
   const handleSuggestionClick = (suggestion) => {
     setPatient_ID(suggestion);
     setShowSuggestions(false);
   };
-  const sendSMS = async (phone, channel_ID, name,room,time,date,hosName) => {
+  const sendSMS = async (
+    phone,
+    channel_ID,
+    name,
+    room,
+    time,
+    date,
+    hosName
+  ) => {
     if (!user) {
       setError("You must be logged in");
       return;
     }
 
     const to = phone;
- 
+
     const message = `
     ${hosName}
     
@@ -269,19 +269,20 @@ const CreateChannel = () => {
     Time: ${time}
     Channel ID: ${channel_ID}
     Please be on time for your appointment.`;
-    
 
-    const emailDetails = { to, message,inst_ID };
+    const emailDetails = { to, message, inst_ID };
 
-
-    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/sms/send-message", {
-      method: "POST",
-      body: JSON.stringify(emailDetails),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const response = await fetch(
+      "https://hospital-management-tnwh.onrender.com/api/sms/send-message",
+      {
+        method: "POST",
+        body: JSON.stringify(emailDetails),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
     const json = await response.json();
 
     if (!response.ok) {
@@ -307,9 +308,8 @@ const CreateChannel = () => {
               onChange={(e) => setChannel_ID(e.target.value)}
             />
           </div> */}
-           
 
-           <div className="form-group">
+          <div className="form-group">
             <label htmlFor="patient_ID">Patient ID</label>
             <div className="dropdown">
               <input
@@ -318,8 +318,10 @@ const CreateChannel = () => {
                 placeholder="Search Patient ID"
                 className="form-control"
                 onChange={handleInputChange}
-                onBlur={() => setShowSuggestions(false)}  // Close suggestions on blur
-                onFocus={() => setShowSuggestions(filteredSuggestions.length > 0)} // Show suggestions on focus
+                onBlur={() => setShowSuggestions(false)} // Close suggestions on blur
+                onFocus={() =>
+                  setShowSuggestions(filteredSuggestions.length > 0)
+                } // Show suggestions on focus
               />
               {showSuggestions && filteredSuggestions.length > 0 && (
                 <div className="dropdown-list">
@@ -338,20 +340,20 @@ const CreateChannel = () => {
           </div>
 
           <div className="form-group">
-  <label htmlFor="doctor_ID">Doctor</label>
-  <select
-    value={doctor_ID}
-    className="form-control"
-    onChange={(e) => setDoctor_ID(e.target.value)}
-  >
-    <option value="">Select a Doctor</option> 
-    {doctorsList.map((doctor) => (
-      <option key={doctor.id} value={doctor.id}>
-        {doctor.name} {/* Displaying the doctor's name */}
-      </option>
-    ))}
-  </select>
-</div>
+            <label htmlFor="doctor_ID">Doctor</label>
+            <select
+              value={doctor_ID}
+              className="form-control"
+              onChange={(e) => setDoctor_ID(e.target.value)}
+            >
+              <option value="">Select a Doctor</option>
+              {doctorsList.map((doctor) => (
+                <option key={doctor.id} value={doctor.id}>
+                  {doctor.name} {/* Displaying the doctor's name */}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="form-group">
             <label htmlFor="date">Date</label>

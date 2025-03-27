@@ -1,45 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { useInstitutesContext } from "../hooks/useInstitutesContext";
-import { useAuthContext } from "../hooks/useAuthContext";
-import "../styles/instituteDetailsComponent.css";
-import "../styles/instituteCreate.css"; // Import the CSS file
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useInstitutesContext } from "../hooks/useInstitutesContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
-
+import "../styles/instituteCreate.css"; // Import the CSS file
+import "../styles/instituteDetailsComponent.css";
 
 const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
- // State variables related to context and authentication
- const { institutes, dispatch } = useInstitutesContext();
- const { user } = useAuthContext();
-  const { sitedetail, dispatch:site } = useSiteDetailsContext();
+  // State variables related to context and authentication
+  const { institutes, dispatch } = useInstitutesContext();
+  const { user } = useAuthContext();
+  const { sitedetail, dispatch: site } = useSiteDetailsContext();
 
- // State variables for managing popup visibility
- const [showCountPopup, setShowCountPopup] = useState(false);
- const [showSMSPricePopup, setShowSMSPricePopup] = useState(false);
- const [showTopUpPopup , setShowTopupPopUp] = useState(false);
- const [showEditInstituteDetailsPopup, setShowEditInstituteDetailsPopup] = useState(false);
- const [showNotificationPopup, setShowNotificationPopup] = useState(false);
- const [showPackagePopup, setShowPackagePopup] = useState(false);
- const [showCardcardStatusPopup, setshowCardcardStatusPopup] = useState(false);
- const [showPackageTimePopup, setShowPackageTimePopup] = useState(false);
- const navigate = useNavigate();
- // State variables for managing institute details
- const [newName, setNewName] = useState("");
- const [newEmail, setNewEmail] = useState("");
- const [newphone,setNewPhone] = useState("");
- const [newImage, setNewImage] = useState(null);
- const [newCount, setNewCount] = useState("");
- const [newTopUP , setNewTopup] = useState("");
- const [newSMS , setNewSMSPrice] =useState("");
- const [newNotification, setNewNotification] = useState("");
- const [instituteDetails, setInstituteDetails] = useState(null);
- const [cardStatus,setNewCardStatus] =useState("")
- const [error, setError] = useState(null);
+  // State variables for managing popup visibility
+  const [showCountPopup, setShowCountPopup] = useState(false);
+  const [showSMSPricePopup, setShowSMSPricePopup] = useState(false);
+  const [showTopUpPopup, setShowTopupPopUp] = useState(false);
+  const [showEditInstituteDetailsPopup, setShowEditInstituteDetailsPopup] =
+    useState(false);
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [showPackagePopup, setShowPackagePopup] = useState(false);
+  const [showCardcardStatusPopup, setshowCardcardStatusPopup] = useState(false);
+  const [showPackageTimePopup, setShowPackageTimePopup] = useState(false);
+  const navigate = useNavigate();
+  // State variables for managing institute details
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newphone, setNewPhone] = useState("");
+  const [newImage, setNewImage] = useState(null);
+  const [newCount, setNewCount] = useState("");
+  const [newTopUP, setNewTopup] = useState("");
+  const [newSMS, setNewSMSPrice] = useState("");
+  const [newNotification, setNewNotification] = useState("");
+  const [instituteDetails, setInstituteDetails] = useState(null);
+  const [cardStatus, setNewCardStatus] = useState("");
+  const [error, setError] = useState(null);
 
- // State variables for managing package details
- const [newPackage, setNewPackage] = useState("");
- const [newPackageTime, setNewPackageTime] = useState("");
- 
+  // State variables for managing package details
+  const [newPackage, setNewPackage] = useState("");
+  const [newPackageTime, setNewPackageTime] = useState("");
+
   const getInstituteDetails = (id) =>
     institutes.find((inst) => inst._id === id) || null;
 
@@ -97,7 +97,6 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
         setInstituteDetails(getInstituteDetails(instituteId));
       }
     } catch (error) {
-      
       // Handle error (e.g., display an error message)
     }
   };
@@ -125,12 +124,9 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
   };
 
   const handleTopUpUpdate = () => {
-
     if (newTopUP == "") {
       setError("please fill TOPUP amount");
     } else {
-
- 
       updateDetails({ topUpPrice: newTopUP });
       setShowTopupPopUp(false);
       // Reset error if it was previously set
@@ -139,12 +135,9 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
   };
 
   const handleSMSUpdate = () => {
-
     if (newSMS == "") {
       setError("please fill sms price");
     } else {
-
-
       updateDetails({ smsPrice: newSMS });
       setShowSMSPricePopup(false);
       // Reset error if it was previously set
@@ -174,7 +167,6 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
   };
 
   const handlePackageTimeUpdate = () => {
-
     if (newPackageTime == "") {
       setError("please select a value");
     } else {
@@ -183,15 +175,14 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
       // );
       const currentDate = new Date();
 
-
-      const expirationTime = new Date(currentDate.getTime() + newPackageTime * 30 * 24 * 60 * 60 * 1000);
-
+      const expirationTime = new Date(
+        currentDate.getTime() + newPackageTime * 30 * 24 * 60 * 60 * 1000
+      );
 
       const colomboTimeZone = "Asia/Colombo";
       const expireTimeColombo = expirationTime.toLocaleString("en-US", {
         timeZone: colomboTimeZone,
       });
-
 
       updateDetails({
         instPackage: newPackageTime,
@@ -207,13 +198,18 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
     if (newName == "" || newEmail == "" || newImage == "") {
       setError("please fill all feilds");
     } else {
-      updateDetails({ name: newName, email: newEmail, image: newImage, phone:newphone });
+      updateDetails({
+        name: newName,
+        email: newEmail,
+        image: newImage,
+        phone: newphone,
+      });
       setShowEditInstituteDetailsPopup(false);
       // Reset error if it was previously set
       setError(null);
     }
   };
-  
+
   const handleCardStatusUpdate = () => {
     if (cardStatus == "") {
       setError("please select a value");
@@ -226,9 +222,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
   };
 
   const createCard = () => {
-
-      navigate('/sadmin/sadminCardCreation'); 
-    
+    navigate("/sadmin/sadminCardCreation");
   };
 
   return (
@@ -297,9 +291,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
               <h2>SMS TopUp Price </h2>
               <p> {instituteDetails.topUpPrice}</p>
               <div className="instituteAddButtonContainer">
-                <button onClick={() => setShowTopupPopUp(true)}>
-                  Update
-                </button>
+                <button onClick={() => setShowTopupPopUp(true)}>Update</button>
               </div>
             </div>
 
@@ -308,7 +300,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
               <p> {instituteDetails.smsPrice}</p>
               <div className="instituteAddButtonContainer">
                 <button onClick={() => setShowSMSPricePopup(true)}>
-                Update
+                  Update
                 </button>
               </div>
             </div>
@@ -336,7 +328,6 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
               </div>
             </div>
 
-
             <div className="detailsSectionPart">
               <h2>Add New Admin</h2>
               <p>
@@ -351,15 +342,14 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
             <div className="detailsSectionPart">
               <h2>Create cards </h2>
               <p>
-                Click the "Create cards" button below to Create cards
-                for the hospital.
+                Click the "Create cards" button below to Create cards for the
+                hospital.
               </p>
               <div className="instituteAddButtonContainer">
                 <button onClick={createCard}>Create a Card</button>
               </div>
             </div>
           </div>
-          
         )}
       </div>
 
@@ -410,9 +400,9 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
             </div>
           </div>
         </div>
-      )} 
+      )}
 
-{showTopUpPopup && (
+      {showTopUpPopup && (
         <div>
           <div
             className="overlay"
@@ -426,8 +416,8 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
             </div>
             <div className="create-popup-box">
               <p>
-                Adjust the topUp amount for your institution by entering the
-                new amount below.
+                Adjust the topUp amount for your institution by entering the new
+                amount below.
               </p>
               <label>
                 <input
@@ -461,8 +451,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
         </div>
       )}
 
-
-{showSMSPricePopup && (
+      {showSMSPricePopup && (
         <div>
           <div
             className="overlay"
@@ -476,8 +465,8 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
             </div>
             <div className="create-popup-box">
               <p>
-                Adjust the SMS price for your institution by entering the
-                new price below.
+                Adjust the SMS price for your institution by entering the new
+                price below.
               </p>
               <label>
                 <input
@@ -612,7 +601,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
         </div>
       )}
 
-{showCardcardStatusPopup && (
+      {showCardcardStatusPopup && (
         <div>
           <div
             className="overlay"
@@ -643,7 +632,11 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
                 {error && <div className="error">{error}</div>}
               </div>
               <div className="buttonContainer">
-                <button className="addButton" style={{marginRight:'5px'}} onClick={handleCardStatusUpdate}>
+                <button
+                  className="addButton"
+                  style={{ marginRight: "5px" }}
+                  onClick={handleCardStatusUpdate}
+                >
                   Save Changes
                 </button>
                 <button
@@ -746,7 +739,7 @@ const InstituteDetailsComponent = ({ instituteId, onOpen }) => {
               </label>
 
               <label>
-              <input
+                <input
                   type="number"
                   onChange={(e) => setNewPhone(e.target.value)}
                   value={newphone}

@@ -23,7 +23,7 @@ export const useLogin = () => {
 
       const json = await response.json();
 
-      console.log("superAdmin",json)
+      console.log("superAdmin", json);
 
       if (response.ok) {
         // No error occurred, set data and return success message
@@ -38,7 +38,7 @@ export const useLogin = () => {
       }
     } catch (error) {
       // Handle network errors
-      
+
       setError("Network error. Please try again later.");
       setIsLoading(false);
       return {
@@ -72,13 +72,11 @@ export const useLogin = () => {
 
         setIsLoading(false);
       } else {
-        
         setError(json.error);
 
         setIsLoading(false);
       }
     } catch (error) {
-      
       setError("Internal Server Error");
 
       setIsLoading(false);

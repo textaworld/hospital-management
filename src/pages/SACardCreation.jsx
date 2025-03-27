@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
+import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import QrCode from "../components/qrGenerator";
 
+import { FaCheck, FaDownload } from "react-icons/fa";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
-import { FaDownload, FaCheck } from "react-icons/fa";
-import { validateAgeInput } from "../validation/validationUtils";
 
 import "../styles/createStudent.css";
 //import { backgroundImage } from "html2canvas/dist/types/css/property-descriptors/background-image";
@@ -125,14 +124,17 @@ const CreateStudent = () => {
 
       const student = { patient_ID };
 
-      const response = await fetch("https://hospital-management-tnwh.onrender.com/api/qr/qrGenerator", {
-        method: "POST",
-        body: JSON.stringify(student),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await fetch(
+        "https://hospital-management-tnwh.onrender.com/api/qr/qrGenerator",
+        {
+          method: "POST",
+          body: JSON.stringify(student),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         // Handle error appropriately
@@ -231,7 +233,7 @@ const CreateStudent = () => {
       <div className="superAdminDashboardContainer">
         <div className="createStudentMainContaner">
           <div className="createStudentFormContaner">
-            <form >
+            <form>
               <div className="createStudentFormContanerTopic">
                 <h3>Add Patient</h3>
               </div>
@@ -437,11 +439,9 @@ const CreateStudent = () => {
                   </button>
                 ) : null}
 
-     
-                  <div className="stepIconGreen">
-                    <FaCheck />
-                  </div>
-
+                <div className="stepIconGreen">
+                  <FaCheck />
+                </div>
               </div>
 
               {/* Step 4

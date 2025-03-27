@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useClassContext } from "../hooks/useClassContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useClassContext } from "../hooks/useClassContext";
 import "../styles/instituteCreate.css"; // Import the CSS file
 
 const CreateClass = ({ onClose, onSuccess }) => {

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { usePaymentContext } from "../hooks/usePaymentContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { usePaymentContext } from "../hooks/usePaymentContext";
 
 import "../styles/updateStudent.css";
 

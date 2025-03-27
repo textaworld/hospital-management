@@ -1,7 +1,7 @@
-import  { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { usePaymentContext } from "../hooks/usePaymentContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { usePaymentContext } from "../hooks/usePaymentContext";
 
 import "../styles/updateStudent.css";
 
@@ -17,36 +17,33 @@ const UpdateClass = () => {
   const [teacherPhone, setPhone] = useState();
   const navigate = useNavigate();
 
-
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(
-          "https://hospital-management-tnwh.onrender.com/api/doctors/getDoctorById/" + id,
+          "https://hospital-management-tnwh.onrender.com/api/doctors/getDoctorById/" +
+            id,
           {
             headers: { Authorization: `Bearer ${user.token}` },
           }
         );
         const json = await response.json();
 
-
         if (response.ok) {
           setClz_ID(json.doctor_ID);
           setSubject(json.specialization);
-          setName(json.name)
-         // setGrade(json.grade);
+          setName(json.name);
+          // setGrade(json.grade);
           // setTName(json.teacherName);
           setTEmail(json.doctorEmail);
           setPhone(json.doctorPhone);
           // setFees(json.classFees);
 
-
           dispatch({ type: "SET_DOCTOR", payload: json });
         }
       } catch (error) {
-        
         // Handle the error as needed
       }
     };
@@ -55,12 +52,6 @@ const UpdateClass = () => {
       fetchStudents();
     }
   }, [dispatch, user, id]);
-
-  
-
-
-
-
 
   const updateStudent = async () => {
     try {
@@ -81,10 +72,9 @@ const UpdateClass = () => {
           }),
         }
       );
-  
+
       const json = await response.json();
- 
-  
+
       if (response.ok) {
         navigate("/classes"); // Redirect after successful update
       } else {
@@ -94,13 +84,12 @@ const UpdateClass = () => {
       console.error(error);
     }
   };
-  
 
   return (
     <div className="form-container">
       <form
         onSubmit={(e) => {
-          e.preventDefault(); 
+          e.preventDefault();
           updateStudent();
         }}
       >
@@ -116,15 +105,13 @@ const UpdateClass = () => {
             onChange={(e) => setClz_ID(e.target.value)}
           />
         </div>{" "}
-
         <div className="form-input">
           <label htmlFor="" className="form-label">
-            Doctor  Name
+            Doctor Name
           </label>
           <input
             value={drName}
             type="text"
-
             className="form-control"
             onChange={(e) => setName(e.target.value)}
           />
@@ -136,7 +123,6 @@ const UpdateClass = () => {
           <input
             value={subject}
             type="text"
-
             className="form-control"
             onChange={(e) => setSubject(e.target.value)}
           />
@@ -178,19 +164,15 @@ const UpdateClass = () => {
         </div> */}
         <div className="form-input">
           <label htmlFor="" className="form-label">
-          Doctor Phone
+            Doctor Phone
           </label>
           <input
             value={teacherPhone}
             type="number"
-
             className="form-control"
             onChange={(e) => setPhone(e.target.value)}
           />
         </div>
-        
-          
-        
         <button type="submit" className="form-button">
           Submit
         </button>

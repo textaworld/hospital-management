@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
+import { FaCheck, FaDownload } from "react-icons/fa";
 import QrCode from "../components/qrGenerator";
-import { useStudentContext } from "../hooks/useStudentContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
-import { FaDownload, FaCheck } from "react-icons/fa";
+import { useStudentContext } from "../hooks/useStudentContext";
 
 import "../styles/createStudent.css";
 //import { backgroundImage } from "html2canvas/dist/types/css/property-descriptors/background-image";
@@ -32,7 +32,7 @@ const CreateStudent = () => {
   const idCardRef = useRef(null);
   const cardStatus = sitedetail.stdCardcardStatus;
   const [isBgImageSelected, setIsBgImageSelected] = useState(false);
-  const [iscardStatus,setCardStatus] = useState("")
+  const [iscardStatus, setCardStatus] = useState("");
 
   // console.log(cardStatus)
 
@@ -50,10 +50,8 @@ const CreateStudent = () => {
   const handleBGImageChange = (e) => {
     const file = e.target.files[0];
     setBgImage(URL.createObjectURL(file));
-    setIsBgImageSelected(true); 
+    setIsBgImageSelected(true);
   };
-  
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,7 +102,7 @@ const CreateStudent = () => {
       setAddress("");
       setPhone("");
       // setStdCount("");
-      setIsDownload(false)
+      setIsDownload(false);
       setQrImage(null);
       setImage(null);
       setError(null);
@@ -123,14 +121,17 @@ const CreateStudent = () => {
 
       const student = { patient_ID };
 
-      const response = await fetch("https://hospital-management-tnwh.onrender.com/api/qr/qrGenerator", {
-        method: "POST",
-        body: JSON.stringify(student),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await fetch(
+        "https://hospital-management-tnwh.onrender.com/api/qr/qrGenerator",
+        {
+          method: "POST",
+          body: JSON.stringify(student),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         // Handle error appropriately
@@ -165,19 +166,18 @@ const CreateStudent = () => {
       link.click();
       setIsDownload(true);
     });
-    createCard()
+    createCard();
   };
 
   const createCard = async () => {
-
-    const status = 'created'
+    const status = "created";
 
     const date = new Date();
     const card = {
       inst_ID: instID,
       patient_ID,
-          date,
-          status
+      date,
+      status,
     };
 
     const response = await fetch(
@@ -193,7 +193,6 @@ const CreateStudent = () => {
     );
 
     const json = await response.json();
-
 
     if (!response.ok) {
       setError(json.error);
@@ -211,21 +210,20 @@ const CreateStudent = () => {
           }
         );
         const siteDetailsJson = await cardDetailsResponse.json();
-  
+
         if (cardDetailsResponse.ok) {
-          setCardStatus(siteDetailsJson.status)
+          setCardStatus(siteDetailsJson.status);
           // Add any additional logic here to handle the data
         }
       } catch (error) {
         console.error(error);
       }
     };
-  
+
     if (user) {
       cardDetails();
     }
   }, [patient_ID]);
-  
 
   return (
     <div>
@@ -485,18 +483,21 @@ const CreateStudent = () => {
                 </h3>
                 <p className="stepDescription">Download ID Card</p>
                 {qrImage && patient_ID ? (
-  iscardStatus !== 'created' ? (
-    <button
-      className="btn btn-primary"
-      onClick={handleDownload}
-      // disabled={!isDownloadEnabled || !isSubmitted}
-    >
-      Download ID Card <FaDownload />
-    </button>
-  ) : (
-    <p style={{color:'red'}}>You can't Create a ID card with same Patient ID . <br/> Please contact the Admin</p> // Show this message if cardStatus is 'created'
-  )
-) : null}
+                  iscardStatus !== "created" ? (
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleDownload}
+                      // disabled={!isDownloadEnabled || !isSubmitted}
+                    >
+                      Download ID Card <FaDownload />
+                    </button>
+                  ) : (
+                    <p style={{ color: "red" }}>
+                      You can't Create a ID card with same Patient ID . <br />{" "}
+                      Please contact the Admin
+                    </p> // Show this message if cardStatus is 'created'
+                  )
+                ) : null}
 
                 {isDownload ? (
                   <div className="stepIconGreen">

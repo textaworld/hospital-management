@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Navigate, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const SuperAdminResetPassword = () => {
   const { adminId, token } = useParams();
@@ -46,7 +46,6 @@ const SuperAdminResetPassword = () => {
       }
     } catch (error) {
       // Handle network errors or other issues
-      
     }
   };
 

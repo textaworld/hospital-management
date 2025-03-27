@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { FaEdit, FaMoneyBill, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import CreateClass from "../components/CreateClass";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
-import { FaTrash, FaEdit, FaMoneyBill } from "react-icons/fa";
-import CreateClass from "../components/CreateClass";
 
 const Clz = () => {
   const { user } = useAuthContext();

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useInstitutesContext } from "../hooks/useInstitutesContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useInstitutesContext } from "../hooks/useInstitutesContext";
 
 const InstituteCreate = ({ onClose, onSuccess }) => {
   const { dispatch } = useInstitutesContext();
@@ -15,8 +15,8 @@ const InstituteCreate = ({ onClose, onSuccess }) => {
 
   const [instPackage, setInstPackage] = useState("");
   const [smsPrice, setSmsPrice] = useState("");
-  const [topUpPrice , setTopUpPrice] = useState("");
-  const [phone,setPhone] = useState("");
+  const [topUpPrice, setTopUpPrice] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
 
@@ -42,7 +42,9 @@ const InstituteCreate = ({ onClose, onSuccess }) => {
 
     const currentDate = new Date();
 
-    const expirationDate = new Date(currentDate.getTime() + instPackage * 30 * 24 * 60 * 60 * 1000);
+    const expirationDate = new Date(
+      currentDate.getTime() + instPackage * 30 * 24 * 60 * 60 * 1000
+    );
 
     const colomboTimeZone = "Asia/Colombo";
     const expireTimeColombo = expirationDate.toLocaleString("en-US", {
@@ -64,17 +66,20 @@ const InstituteCreate = ({ onClose, onSuccess }) => {
       topUpPrice,
       smsPrice,
       stdCardcardStatus,
-      phone
+      phone,
     };
 
-    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/institute/create", {
-      method: "POST",
-      body: JSON.stringify(institute),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const response = await fetch(
+      "https://hospital-management-tnwh.onrender.com/api/institute/create",
+      {
+        method: "POST",
+        body: JSON.stringify(institute),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
     const json = await response.json();
 
     if (!response.ok) {
@@ -89,7 +94,7 @@ const InstituteCreate = ({ onClose, onSuccess }) => {
       setPhone("");
       setCount("");
       setNotification("");
-      setCardSatus("")
+      setCardSatus("");
       setError(null);
       setImage(null); // Reset image state
       setInstPackage("");
@@ -102,7 +107,9 @@ const InstituteCreate = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div style={{ maxHeight: '400px', overflowY: 'auto', paddingRight: '17px' }}>
+    <div
+      style={{ maxHeight: "400px", overflowY: "auto", paddingRight: "17px" }}
+    >
       <div className="overlay" onClick={onClose}></div>
       <div className="create-popup">
         <div className="popup_topic">

@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { FaArrowLeft, FaEye, FaFileMedical } from "react-icons/fa";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { Link, useNavigate } from "react-router-dom";
-import { FaEdit } from "react-icons/fa";
-import { FaArrowLeft } from "react-icons/fa";
 
 const ChannelHistory = () => {
   const { id } = useParams();
@@ -13,160 +11,173 @@ const ChannelHistory = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const [hostName, setHostName] = useState("");
-
-  const fetchSiteDetails = async () => {
-    if (!user) {
-      setError(new Error("User not authenticated"));
-      return;
-    }
-    
-    const response = await fetch(
-      `https://hospital-management-tnwh.onrender.com/api/site/getone/${user.instituteId}`,
-      {
-        headers: { Authorization: `Bearer ${user.token}` },
-      }
-    );
-    const json = await response.json();
-    setHostName(json.name);
-    if (response.ok) {
-      // Check every second (adjust as needed)
-    } else {
-      console.log("error");
-    }
-  };
+  const API_BASE_URL = "https://hospital-management-tnwh.onrender.com/api";
 
   useEffect(() => {
-    fetchSiteDetails();
-    // fetchAdminDetails();
-  }, []);
+    const fetchData = async () => {
+      if (!user) {
+        setError(new Error("User not authenticated"));
+        setLoading(false);
+        return;
+      }
 
-  const fetchChannels = async () => {
+      try {
+        // Fetch site details
+        await fetchSiteDetails();
+        // Fetch channel history
+        await fetchChannels();
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, user]);
+
+  const fetchSiteDetails = async () => {
+    if (!user) return;
+
     try {
       const response = await fetch(
-        `https://hospital-management-tnwh.onrender.com/api/channelHistory/getChannelHistoryByPatient_ID/${id}`,
+        `${API_BASE_URL}/site/getone/${user.instituteId}`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      const json = await response.json();
 
-      if (Array.isArray(json)) {
-        setChannels(json); // Set channels to the array
-      } else {
-        console.error("Unexpected data format", json.data);
-        setChannels([]); // Set empty array if data format is unexpected
+      if (!response.ok) {
+        throw new Error("Failed to fetch site details");
       }
-    } catch (error) {
-      console.error(error);
-      setError(error); // Set error state
+
+      const json = await response.json();
+      setHostName(json.name);
+    } catch (err) {
+      console.error("Error fetching site details:", err);
+      throw err;
     }
   };
 
-  useEffect(() => {
-    fetchChannels();
+  const fetchChannels = async () => {
+    if (!user || !id) return;
 
-    setLoading(false);
-  }, [id]);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/channelHistory/getChannelHistoryByPatient_ID/${id}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+      if (!response.ok) {
+        throw new Error("Failed to fetch channel history");
+      }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-  const handleGoBack = () => {
-    navigate(-1);
+      const json = await response.json();
+
+      if (Array.isArray(json)) {
+        setChannels(json);
+      } else {
+        console.error("Unexpected data format:", json);
+        setChannels([]);
+      }
+    } catch (err) {
+      console.error("Error fetching channels:", err);
+      throw err;
+    }
   };
 
-  const handlePrescriptionClick = () => {
+  const handleGoBack = () => navigate(-1);
+
+  const handleWriteNote = () => {
     if (id) {
       navigate(`/prescription/${id}`);
     }
   };
 
-  return (
-    <div className="instituteTableContainer">
-      <div
-        style={{
-          background: "#02bffb",
-          width: "100%",
-          boxSizing: "border-box",
-          padding: "10px",
-          position: "relative",
-        }}
-      >
-        <button
-          className="navbar-backbutton"
-          onClick={handleGoBack}
-          style={{
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            position: "absolute",
-            left: "10px",
-            top: "50%",
-            transform: "translateY(-50%)",
-          }}
-        >
-          <FaArrowLeft size={24} />
-        </button>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "50px",
-          }}
-        >
-          <h1 style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}>
-            {hostName}
-          </h1>
-        </div>
+  // Loading state
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading patient data...</p>
       </div>
-      <button
-        onClick={handlePrescriptionClick}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: "#4eacca",
-          color: "black",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          marginTop: "10px",
-        }}
-      >
-        Write a note
-      </button>
-      <h1 style={{ display: "flex", justifyContent: "center" }}>
-        Channel History
-      </h1>
-      <table className="instituteTable">
-        <thead>
-          <tr>
-            <th>Sick</th>
-            <th>Doctor Name</th>
-            <th>View</th>
-          </tr>
-        </thead>
-        <tbody>
-          {channels.map((channel) => (
-            <tr key={channel._id}>
-              <td>{channel.sick}</td>
-              <td>{channel.doctor_Name}</td>
-              <td>
-                <Link
-                  to={`/patientChannelView/${channel._id}`}
-                  className="btn btn-success"
-                >
-                  <FaEdit />
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error</h2>
+        <p>{error.message}</p>
+        <button onClick={handleGoBack} className="btn-primary">
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-container">
+      {/* Header */}
+      <header className="page-header">
+        <button
+          className="back-button"
+          onClick={handleGoBack}
+          aria-label="Go back"
+        >
+          <FaArrowLeft />
+        </button>
+        <h1 className="hospital-name">{hostName}</h1>
+      </header>
+
+      <main className="content-container">
+        <div className="actions-bar">
+          <h1 className="page-title">Patient Channel History</h1>
+          <button onClick={handleWriteNote} className="btn-primary">
+            <FaFileMedical className="icon-left" />
+            Write a Note
+          </button>
+        </div>
+
+        {channels.length === 0 ? (
+          <div className="empty-state">
+            <p>No channel history found for this patient.</p>
+          </div>
+        ) : (
+          <div className="table-responsive">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Condition</th>
+                  <th>Doctor</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {channels.map((channel) => (
+                  <tr key={channel._id}>
+                    <td>{channel.sick}</td>
+                    <td>{channel.doctor_Name}</td>
+                    <td>
+                      <Link
+                        to={`/patientChannelView/${channel._id}`}
+                        className="btn-icon"
+                        title="View details"
+                      >
+                        <FaEye />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

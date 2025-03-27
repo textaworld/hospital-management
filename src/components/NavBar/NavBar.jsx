@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { NavLink ,useNavigate} from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 //import { useAuthContext } from '../../hooks/useAuthContext';
-import { useSiteDetailsContext } from "../../hooks/useSiteDetailsContext";
+import { FaArrowLeft, FaSignOutAlt } from "react-icons/fa";
 import { useLogout } from "../../hooks/useLogout";
-import { FaArrowLeft } from 'react-icons/fa';
-import { FaSignOutAlt } from 'react-icons/fa';
-
-
+import { useSiteDetailsContext } from "../../hooks/useSiteDetailsContext";
 
 import "./NavBar.css";
 
@@ -16,7 +13,6 @@ const NavBar = () => {
   const handleGoBack = () => {
     navigate(-1); // Go back to the previous screen
   };
-
 
   const { sitedetail } = useSiteDetailsContext();
   //const { user } = useAuthContext();
@@ -41,7 +37,7 @@ const NavBar = () => {
   //       const json = await response.json();
   //       dispatch({ type: 'SET_SITE_DETAILS', payload: json });
   //     } catch (error) {
-  //       
+  //
   //       // Handle the error, e.g., show an error message to the user
   //     }
   //   };
@@ -54,19 +50,19 @@ const NavBar = () => {
   return (
     <nav>
       <button className="navbar-backbutton" onClick={handleGoBack}>
-      <FaArrowLeft />
-    </button>
+        <FaArrowLeft />
+      </button>
       {/* <div className="title">{sitedetail.name}</div> */}
-      
-          <NavLink  to="/" className="title">{sitedetail.name}
-          </NavLink>
-        
+
+      <NavLink to="/" className="title">
+        {sitedetail.name}
+      </NavLink>
+
       <div className="menu" onClick={() => setMenuOpen(!menuOpen)}>
         <span></span>
         <span></span>
       </div>
       <ul className={menuOpen ? "open" : ""}>
-       
         <li>
           <NavLink to="/patients" className="">
             PATIENTS
@@ -79,22 +75,19 @@ const NavBar = () => {
           <NavLink to="/payments">PAYMENTS</NavLink>
         </li>
         <li>
-        
           <NavLink to="/scan">SCAN</NavLink>
         </li>
         <li>
-        
           <NavLink to="/channels">APPOINMENTS</NavLink>
         </li>
         <li>
-        
           <NavLink to="/sendMsgs">Message</NavLink>
         </li>
-        
+
         <li>
-        <button className="navbar-logoutbutton" onClick={handleClick}>
-      <FaSignOutAlt/>
-    </button>
+          <button className="navbar-logoutbutton" onClick={handleClick}>
+            <FaSignOutAlt />
+          </button>
         </li>
       </ul>
     </nav>

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import "../styles/updateStudent.css";
 import { useStudentContext } from "../hooks/useStudentContext";
+import "../styles/updateStudent.css";
 
 const UpdateStudent = () => {
   const { id } = useParams();

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useAdminContext } from "../hooks/useAdminContext";
-import "../styles/instituteDetails.css";
 import { FaTrash } from "react-icons/fa";
+import { useAdminContext } from "../hooks/useAdminContext";
+import { useAuthContext } from "../hooks/useAuthContext";
+import "../styles/instituteDetails.css";
 
 const AdminDetails = ({ instituteId }) => {
   const { user } = useAuthContext();
@@ -30,7 +30,6 @@ const AdminDetails = ({ instituteId }) => {
         const reversedJson = [...json].reverse();
         dispatch({ type: "SET_ADMINS", payload: reversedJson });
       } catch (error) {
-        
         dispatch({ type: "SET_ADMINS", payload: [] });
       }
     };
@@ -59,9 +58,7 @@ const AdminDetails = ({ instituteId }) => {
       } else {
         const errorData = await response.json();
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   const handleAdminDelete = async () => {
@@ -136,7 +133,8 @@ const AdminDetails = ({ instituteId }) => {
             <div className="create-popup-box">
               <p>
                 To confirm the deletion of the admin, please enter the admin's
-                email address below. <br/>This action cannot be undone.
+                email address below. <br />
+                This action cannot be undone.
               </p>
               <label>
                 <input

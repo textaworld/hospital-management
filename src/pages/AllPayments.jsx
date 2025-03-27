@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import * as XLSX from "xlsx"; // Import XLSX library
 import { useAuthContext } from "../hooks/useAuthContext";
 import { usePaymentContext } from "../hooks/usePaymentContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
-import { FaTrash } from "react-icons/fa";
-import * as XLSX from "xlsx"; // Import XLSX library
 
 const Payments = () => {
   const { payments, dispatch } = usePaymentContext();
@@ -18,7 +18,6 @@ const Payments = () => {
   const [searchTermDate, setSearchTermDate] = useState("");
   const [scrollPosition, setScrollPosition] = useState(0);
   const role = user.role;
-
 
   const fetchPayments = async () => {
     try {
@@ -162,17 +161,18 @@ const Payments = () => {
           </div>
 
           {role === "HEAD_OFFICE_ADMIN" && (
-  <div style={{ display: "flex", justifyContent: "end"}}>
-    <Link to="/headOfficeHome/instituteIncome">
-      <button>Hospital Income</button>
-    </Link>
-  </div>
-)}
-
+            <div style={{ display: "flex", justifyContent: "end" }}>
+              <Link to="/headOfficeHome/instituteIncome">
+                <button>Hospital Income</button>
+              </Link>
+            </div>
+          )}
 
           {/* Button to export to Excel */}
           <div style={{ marginBottom: "20px" }}>
-            <button onClick={exportToExcel} className="export-btn">Export to Excel</button>
+            <button onClick={exportToExcel} className="export-btn">
+              Export to Excel
+            </button>
           </div>
 
           <table className="instituteTable">

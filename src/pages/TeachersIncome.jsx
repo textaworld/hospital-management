@@ -1,9 +1,9 @@
-import  { useState, useEffect } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useParams } from "react-router-dom";
-import "../styles/updateStudent.css";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useParams } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
+import "../styles/updateStudent.css";
 
 const TeachersIncome = () => {
   const { id } = useParams();
@@ -12,13 +12,13 @@ const TeachersIncome = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [dailyIncome, setDailyIncome] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-const [doctorID,setDoctorID] = useState("")
+  const [doctorID, setDoctorID] = useState("");
 
   const fetchMonthlyIncome = async () => {
     try {
-      console.log("month",selectedMonth)
+      console.log("month", selectedMonth);
       const response = await fetch(
-        `https://hospital-management-tnwh.onrender.com/api/payments/calculateMonthlyIncome?doctor_ID=${doctorID}&month=${selectedMonth}`, 
+        `https://hospital-management-tnwh.onrender.com/api/payments/calculateMonthlyIncome?doctor_ID=${doctorID}&month=${selectedMonth}`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
@@ -48,25 +48,24 @@ const [doctorID,setDoctorID] = useState("")
         const json = await response.json();
 
         //console.log("doctor",json.doctor_ID)
-        setDoctorID(json.doctor_ID)
+        setDoctorID(json.doctor_ID);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
 
     if (user) {
       fetchDoctor();
     }
-  }, [ user]);
+  }, [user]);
 
   const handleCalculateIncome = () => {
     fetchMonthlyIncome();
   };
 
-
-const handleCalculateDailyIncome = async () => {
+  const handleCalculateDailyIncome = async () => {
     try {
-      console.log("d id",id)
+      console.log("d id", id);
       const response = await fetch(
         `https://hospital-management-tnwh.onrender.com/api/payments/calculateIncomeByDate?doctor_ID=${doctorID}&date=${selectedDate.toISOString()}`,
         {
@@ -75,7 +74,7 @@ const handleCalculateDailyIncome = async () => {
       );
       const data = await response.json();
 
-    //  console.log(data)
+      //  console.log(data)
 
       if (response.ok) {
         setDailyIncome(data.totalIncome);
@@ -87,40 +86,50 @@ const handleCalculateDailyIncome = async () => {
     }
   };
 
-
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
-    <div style={{ width: "45%", marginLeft: "300px",marginTop:'100px' }}>
-      <div>
-        <label htmlFor="month">Select Month:</label>
-        <select
-          id="month"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
+      <div style={{ width: "45%", marginLeft: "300px", marginTop: "100px" }}>
+        <div>
+          <label htmlFor="month">Select Month:</label>
+          <select
+            id="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          >
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+          </select>
+        </div>
+        <button
+          style={{ backgroundColor: "#0f172a" }}
+          onClick={handleCalculateIncome}
         >
-          <option value="January">January</option>
-          <option value="February">February</option>
-          <option value="March">March</option>
-          <option value="April">April</option>
-          <option value="May">May</option>
-          <option value="June">June</option>
-          <option value="July">July</option>
-          <option value="August">August</option>
-          <option value="September">September</option>
-          <option value="October">October</option>
-          <option value="November">November</option>
-          <option value="December">December</option>
-        </select>
+          Calculate Monthly Income
+        </button>
+        {monthlyIncome !== null ? (
+          <p>
+            Monthly Income:{" "}
+            <span style={{ color: "red" }}>Rs.{monthlyIncome}</span>
+          </p>
+        ) : (
+          <p>No monthly income calculated</p>
+        )}
       </div>
-      <button style={{backgroundColor:'#0f172a'}} onClick={handleCalculateIncome}>Calculate Monthly Income</button>
-      {monthlyIncome !== null ? (
-        <p>Monthly Income:  <span style={{color:'red'}}>Rs.{monthlyIncome}</span></p>
-      ) : (
-        <p>No monthly income calculated</p>
-      )}
-    </div>
-    <div style={{ width: "45%", marginTop: "100px" }}>
-        <DatePicker selected={selectedDate} onChange={date => setSelectedDate(date)} />
+      <div style={{ width: "45%", marginTop: "100px" }}>
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+        />
         <button
           style={{ backgroundColor: "#0f172a" }}
           onClick={handleCalculateDailyIncome}
@@ -135,7 +144,7 @@ const handleCalculateDailyIncome = async () => {
           <p>No daily income calculated</p>
         )}
       </div>
-  </div>
+    </div>
   );
 };
 

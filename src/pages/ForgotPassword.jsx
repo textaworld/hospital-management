@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Spinner from "../components/Spinner";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner";
 import "../styles/forgotPassword.css";
 
 const ForgotPassword = () => {
@@ -38,7 +38,6 @@ const ForgotPassword = () => {
       }
     } catch (error) {
       setMessage("Error sending forgot password request");
-      
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +55,6 @@ const ForgotPassword = () => {
             reset your password.
           </p>
           <label>
-           
             <input
               type="email"
               value={email}

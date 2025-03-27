@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useInstitutesContext } from "../hooks/useInstitutesContext";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useAdminContext } from "../hooks/useAdminContext";
 import { FaTrash } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { useAdminContext } from "../hooks/useAdminContext";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useInstitutesContext } from "../hooks/useInstitutesContext";
 
 import "../styles/instituteDetails.css";
 
@@ -42,10 +42,12 @@ const InstituteDetails = () => {
   // const filteredInstitutes = institutes.filter((institute) =>
   //   institute.name.toLowerCase().includes(searchTerm.toLowerCase())
   // );
-  const filteredInstitutes = institutes.filter((institute) =>
-  institute.name && typeof institute.name === 'string' && institute.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
+  const filteredInstitutes = institutes.filter(
+    (institute) =>
+      institute.name &&
+      typeof institute.name === "string" &&
+      institute.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleDelete = async (id) => {
     try {
@@ -65,11 +67,8 @@ const InstituteDetails = () => {
         dispatch({ type: "DELETE_INSTITUE", payload: id });
       } else {
         const errorData = await response.json();
-        
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   const handleInstituteDelete = async () => {
@@ -122,7 +121,9 @@ const InstituteDetails = () => {
                   <td>{institute.count}</td>
                   <td>{institute.notification}</td>
                   <td>
-                    <Link to={`/sadmin/instituteadmins/${institute._id}`}>View</Link>
+                    <Link to={`/sadmin/instituteadmins/${institute._id}`}>
+                      View
+                    </Link>
                   </td>
                   <td>
                     <div className="deleteicon">
@@ -159,7 +160,6 @@ const InstituteDetails = () => {
                 below. This action cannot be undone.
               </p>
               <label>
-               
                 <input
                   type="text"
                   placeholder="Enter Institute Name"

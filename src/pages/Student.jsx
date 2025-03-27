@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import { FaEdit, FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useStudentContext } from "../hooks/useStudentContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
+import { useStudentContext } from "../hooks/useStudentContext";
 import "../styles/instituteDetails.css";
 import "../styles/superAdminDashboard.css";
-import { FaUser, FaEdit, FaTrash } from "react-icons/fa";
-import * as XLSX from "xlsx";
 
 const Students = () => {
   const { students, dispatch } = useStudentContext();
@@ -21,14 +21,16 @@ const Students = () => {
   // Generate Excel
   const generateExcel = () => {
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(filteredStudents.map(student => ({
-      "Patient ID": student.patient_ID,
-      "Name": student.name,
-      "Email": student.email,
-      "Age": student.age,
-      "Address": student.address,
-      "Phone": student.phone,
-    })));
+    const ws = XLSX.utils.json_to_sheet(
+      filteredStudents.map((student) => ({
+        "Patient ID": student.patient_ID,
+        Name: student.name,
+        Email: student.email,
+        Age: student.age,
+        Address: student.address,
+        Phone: student.phone,
+      }))
+    );
 
     XLSX.utils.book_append_sheet(wb, ws, "Students");
     XLSX.writeFile(wb, "students.xlsx");
@@ -62,7 +64,9 @@ const Students = () => {
   const filteredStudents = Array.isArray(students)
     ? students.filter(
         (student) =>
-          student.patient_ID.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          student.patient_ID
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) &&
           student.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
           (!ageQuery || student.age.toString() === ageQuery) // Filter by age if ageQuery is set
       )
@@ -73,8 +77,12 @@ const Students = () => {
       <div className="superAdminDashboardContainer">
         <div className="instituteTableContainer">
           <div className="instituteAddButtonContainer">
-            <button onClick={() => navigate("/addPatient")}>Add New Patient</button>
-            <button style={{ marginLeft: '5px' }} onClick={generateExcel}>Generate Excel</button>
+            <button onClick={() => navigate("/addPatient")}>
+              Add New Patient
+            </button>
+            <button style={{ marginLeft: "5px" }} onClick={generateExcel}>
+              Generate Excel
+            </button>
           </div>
           <div className="filter-container">
             {/* Search by Patient ID or Name */}
@@ -119,16 +127,21 @@ const Students = () => {
                     <td>{student.address}</td>
                     <td>{student.phone}</td>
                     <td>
-                      <Link to={`/studentprofile/${student._id}`} className="btn btn-success">
+                      <Link
+                        to={`/studentprofile/${student._id}`}
+                        className="btn btn-success"
+                      >
                         <FaUser />
                       </Link>
                     </td>
                     <td>
-                      <Link to={`/updateStd/${student._id}`} className="btn btn-success">
+                      <Link
+                        to={`/updateStd/${student._id}`}
+                        className="btn btn-success"
+                      >
                         <FaEdit />
                       </Link>
                     </td>
-                    
                   </tr>
                 ))
               ) : (

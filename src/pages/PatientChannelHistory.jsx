@@ -1,7 +1,7 @@
-import  { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import '../styles/instituteDetails.css'
+import "../styles/instituteDetails.css";
 const PatientChannelHistory = () => {
   const { id } = useParams(); // Get patient_ID from URL parameters
   const [channels, setChannels] = useState([]); // Initialize as an array
@@ -72,58 +72,58 @@ const PatientChannelHistory = () => {
 
   return (
     <div className="superAdminDashboardContainer">
- <div className="instituteTableContainer"> 
-      <h1 style={{justifyContent:'center',display:'flex'}}>CHANNEL HISTORY</h1>
-      <table className="instituteTable">
-        <thead>
-          <tr>
-            <th>Channel ID</th>
-            <th>Doctor ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Room</th>
-          </tr>
-        </thead>
-        <tbody>
-          {channels.map((channel) => (
-            <tr key={channel._id}>
-              <td>{channel.channel_ID}</td>
-              <td>{channel.doctor_ID}</td>
-              <td>{channel.date}</td>
-              <td>{channel.time}</td>
-              <td>{channel.room}</td>
+      <div className="instituteTableContainer">
+        <h1 style={{ justifyContent: "center", display: "flex" }}>
+          CHANNEL HISTORY
+        </h1>
+        <table className="instituteTable">
+          <thead>
+            <tr>
+              <th>Channel ID</th>
+              <th>Doctor ID</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Room</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {channels.map((channel) => (
+              <tr key={channel._id}>
+                <td>{channel.channel_ID}</td>
+                <td>{channel.doctor_ID}</td>
+                <td>{channel.date}</td>
+                <td>{channel.time}</td>
+                <td>{channel.room}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-      <h1 style={{justifyContent:'center',display:'flex'}}>PAYMENT HISTORY</h1>
-      <table className="instituteTable">
-        <thead>
-          <tr>
-
-            <th>Channel ID</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.map((payment) => (
-            <tr key={payment._id}>
-
-
-              <td>{payment.channel_ID}</td>
-              <td>{payment.amount}</td>
-              <td>{payment.date}</td>
-              <td>{payment.status}</td>
+        <h1 style={{ justifyContent: "center", display: "flex" }}>
+          PAYMENT HISTORY
+        </h1>
+        <table className="instituteTable">
+          <thead>
+            <tr>
+              <th>Channel ID</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {payments.map((payment) => (
+              <tr key={payment._id}>
+                <td>{payment.channel_ID}</td>
+                <td>{payment.amount}</td>
+                <td>{payment.date}</td>
+                <td>{payment.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-    </div>
-   
   );
 };
 

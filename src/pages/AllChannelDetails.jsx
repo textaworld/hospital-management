@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { FaEdit, FaMoneyBill, FaTrash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useSiteDetailsContext } from "../hooks/useSiteDetailsContext";
 import "../styles/instituteDetails.css";
 import "../styles/superAdminDashboard.css";
-import { FaMoneyBill, FaEdit, FaTrash } from "react-icons/fa";
-import * as XLSX from "xlsx";
 
 const Channels = () => {
   const [channels, setChannels] = useState([]);
@@ -23,8 +23,8 @@ const Channels = () => {
   // Helper function to format date to MM/DD/YYYY
   const formatDateToMMDDYYYY = (dateString) => {
     const date = new Date(dateString);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
-    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based
+    const day = date.getDate().toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${month}/${day}/${year}`;
   };
@@ -36,9 +36,9 @@ const Channels = () => {
         "Channel ID": channel.channel_ID,
         "Patient ID": channel.patient_ID,
         "Doctor ID": channel.doctor_ID,
-        "Date": formatDateToMMDDYYYY(channel.date),
-        "Time": channel.time,
-        "Room": channel.room,
+        Date: formatDateToMMDDYYYY(channel.date),
+        Time: channel.time,
+        Room: channel.room,
       }))
     );
     XLSX.utils.book_append_sheet(wb, ws, "Channels");
@@ -184,12 +184,18 @@ const Channels = () => {
                       <td>{channel.time}</td>
                       <td>{channel.room}</td>
                       <td>
-                        <Link to={`/payment/${channel._id}`} className="btn btn-success">
+                        <Link
+                          to={`/payment/${channel._id}`}
+                          className="btn btn-success"
+                        >
                           <FaMoneyBill />
                         </Link>
                       </td>
                       <td>
-                        <Link to={`/updateChannel/${channel._id}`} className="btn btn-success">
+                        <Link
+                          to={`/updateChannel/${channel._id}`}
+                          className="btn btn-success"
+                        >
                           <FaEdit />
                         </Link>
                       </td>

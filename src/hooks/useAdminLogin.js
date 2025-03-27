@@ -13,11 +13,14 @@ export const useAdminLogin = () => {
     setError(null);
 
     try {
-      const response = await fetch("https://hospital-management-tnwh.onrender.com/api/site/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://hospital-management-tnwh.onrender.com/api/site/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const json = await response.json();
 
@@ -27,23 +30,19 @@ export const useAdminLogin = () => {
       }
 
       if (response.ok) {
-      // Save the user to local storage
-      localStorage.setItem("user", JSON.stringify(json));
+        // Save the user to local storage
+        localStorage.setItem("user", JSON.stringify(json));
 
-      // Update the auth context
-      dispatch({ type: "LOGIN", payload: json });
+        // Update the auth context
+        dispatch({ type: "LOGIN", payload: json });
 
-      // Fetch site details
-      // await fetchSiteDetails(json.instituteId, json.token);
+        // Fetch site details
+        // await fetchSiteDetails(json.instituteId, json.token);
 
-      // Update loading state
-      setIsLoading(false);
-      
+        // Update loading state
+        setIsLoading(false);
       }
-
-      
     } catch (error) {
-      
       setError("An error occurred during login.");
       setIsLoading(false);
     }

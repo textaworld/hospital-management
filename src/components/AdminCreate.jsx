@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+import React, { useState } from "react";
 import { useAdminContext } from "../hooks/useAdminContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 import "../styles/instituteCreate.css"; // Import the CSS file
 import Spinner from "./Spinner";
 
@@ -25,14 +25,17 @@ const AdminCreate = ({ instituteId, onClose, onSuccess }) => {
 
     const admin = { email, password, role, instituteId };
 
-    const response = await fetch("https://hospital-management-tnwh.onrender.com/api/admin/register", {
-      method: "POST",
-      body: JSON.stringify(admin),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const response = await fetch(
+      "https://hospital-management-tnwh.onrender.com/api/admin/register",
+      {
+        method: "POST",
+        body: JSON.stringify(admin),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
 
     const json = await response.json();
 
